@@ -1,0 +1,44 @@
+# Naser AlDuaij
+# Linux 3.1.10 version for running on both the android emulator and Nexus 7 device
+# Code base: tegra (android-tegra3-grouper-3.1-jb-fr2)
+# Emulator drivers and configuration files patched from 2.6.29 (Goldfish) and Linux 3.2
+
+Known issues:
+Emulator's keyboard is sometimes unresponsive for a couple of seconds, clicking the screen
+	seems to remedy the issue
+
+Instructions:
+Android SDK is required. Device needs to be unlocked with USB debugging enabled (not necessary for emulator)
+For the device you need to package a new boot image along with the ramdisk ramdisk.img extracted from
+	Nexus 7 factory image (https://developers.google.com/android/nexus/images)
+	The ram disk is modified to enable debugging on all apps and adb root access
+
+a) These values have to be exported.
+export ARCH=arm
+export SUBARCH=arm
+export CROSS_COMPILE=arm-eabi
+export PATH=$(pwd)/prebuilt/linux-x86/toolchain/arm-eabi-4.4.3/bin:$PATH  # cd to parent dir of prebuilt
+OPTIONAL: In order to change the kernel name shown in the OS use export LOCALVERSION="-YOUR_STRING"
+
+b) cd in to source tree directory
+
+c) Build for emulator or device under same source tree (NOTE: zImage gets overwritten after compilation)
+	i) Emulator -
+	make goldfish_armv7_defconfig
+	make
+	emulator -avd YOUR_AVD -kernel arch/arm/boot/zImage -show-kernel
+
+	ii) Device -
+	make tegra3_android_defconfig
+	make
+	adb reboot bootloader
+	fastboot boot arch/arm/boot/zImage ramdisk.img	# This does NOT flash your device, next time you
+							# restart you will get the inboxed image. In order
+							# to flash your device look in to fastboot flash
+
+
+Credits:
+Source code: source.android.com
+Source code: subreption.com
+Tools: developer.android.com
+Factory image: developers.google.com/android/nexus/images
