@@ -35,9 +35,9 @@ static void usage(char **argv)
 
 int main(int argc, char **argv)
 {
-        (void)signal(SIGPIPE, sighandler);
-        (void)signal(SIGHUP, sighandler);
-        (void)signal(SIGQUIT, sighandler);
+	(void)signal(SIGPIPE, sighandler);
+	(void)signal(SIGHUP, sighandler);
+	(void)signal(SIGQUIT, sighandler);
 
 	if (argc != 2)
 		usage(argv);
@@ -52,14 +52,13 @@ int main(int argc, char **argv)
 
 void sighandler(int sig)
 {
-        switch (sig)
-        {
-        case SIGHUP:
-        case SIGPIPE:
-        case SIGQUIT:
-                break;
-        default:
-                break;
-        }
+	switch (sig) {
+	case SIGHUP:
+	case SIGPIPE:
+	case SIGQUIT:
+		break;
+	default:
+		break;
+	}
 }
 

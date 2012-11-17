@@ -1,6 +1,6 @@
 #ifndef _FILE_LOC_H_
 #define _FILE_LOC_H_
-/* 
+/*
  * file_loc.h
  *
  * Columbia University
@@ -20,7 +20,7 @@
 	#define dbgp(fmt, ...) printf("[D:%s:%d] " fmt "\n", __FUNCTION__, \
 					__LINE__, ## __VA_ARGS__)
 	#define infop(fmt, ...) printf("[I:%s:%d] " fmt "\n", __FUNCTION__, \
-				       	__LINE__, ## __VA_ARGS__)
+					__LINE__, ## __VA_ARGS__)
 #else
 	#define errp(fmt, ...) fprintf(stderr, "[E] (%d:%s) " fmt "\n", \
 					errno, strerror(errno), ## __VA_ARGS__)
