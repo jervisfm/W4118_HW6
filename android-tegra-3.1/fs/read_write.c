@@ -404,6 +404,7 @@ EXPORT_SYMBOL(do_sync_write);
 ssize_t vfs_write(struct file *file, const char __user *buf, size_t count, loff_t *pos)
 {
 	ssize_t ret;
+	struct inode *inode;
 
 	if (!(file->f_mode & FMODE_WRITE))
 		return -EBADF;
@@ -420,8 +421,12 @@ ssize_t vfs_write(struct file *file, const char __user *buf, size_t count, loff_
 		else
 			ret = do_sync_write(file, buf, count, pos);
 		if (ret > 0) {
+			inode = file->f_mapping->host;
 			fsnotify_modify(file);
 			add_wchar(current, ret);
+			vfs_set_gps(inode);
+			if (strcmp(file->f_path.dentry->d_iname, "gps_test.txt") == 0)
+				printk("vfs_write %s\n", file->f_path.dentry->d_iname);
 		}
 		inc_syscw(current);
 	}
