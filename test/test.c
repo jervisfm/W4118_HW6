@@ -191,7 +191,16 @@ static void do_nothing()
 int main(int argc, char **argv)
 {
 	do_nothing();
-	test_write_read();
-	//test_read();
+	if (argc < 2) {
+		printf("Usage: test read|write|mod\n");
+		return 0;
+	}
+
+	if (strcmp(argv[1], "read") == 0)
+		test_read();
+	else if (strcmp(argv[1], "write") == 0)
+		test_write_read();
+	else if (strcmp(argv[1], "mod") == 0)
+		test_mod();
 	return 0;
 }

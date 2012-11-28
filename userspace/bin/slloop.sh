@@ -1,5 +1,5 @@
-adb shell rm -r /data/misc/hmwk6
-adb shell mkdir /data/misc/hmwk6
+#adb shell rm -r /data/misc/hmwk6
+#adb shell mkdir /data/misc/hmwk6
 adb shell ln -s /dev/block/loop0 /dev/loop0
 adb shell ln -s /dev/block/loop1 /dev/loop1
 adb shell ln -s /dev/block/loop2 /dev/loop2

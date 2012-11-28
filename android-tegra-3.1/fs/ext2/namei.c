@@ -183,8 +183,8 @@ int ext2_set_gps (struct inode *inode)
 	 * __write_inode() function in inode.c.
 	 */
 	getnstimeofday(&now);
-	age.tv_sec = (now.tv_sec - k_gps.timestamp.tv_sec);
-	age.tv_sec = age.tv_sec < 0 ? -age.tv_sec : age.tv_sec;
+	age.tv_sec = k_gps.timestamp.tv_sec;
+	/*age.tv_sec = age.tv_sec < 0 ? -age.tv_sec : age.tv_sec;*/
 	age_in_seconds = (unsigned int) age.tv_sec;
 	inode_gps->age = cpu_to_le32(age_in_seconds);
 	/* Mark Inode dirty */
@@ -200,6 +200,7 @@ int ext2_get_gps (struct inode *inode, struct gps_location *loc)
 	struct inode *ext_inode = NULL;
 	struct ext2_inode_info *ei = NULL;
 	unsigned int age = 0;
+	long temp;
 	if (loc == NULL || inode == NULL)
 		return -EINVAL;
 
@@ -237,7 +238,10 @@ int ext2_get_gps (struct inode *inode, struct gps_location *loc)
 	loc->longitude = *((double *)(&ei->i_gps.longitude));
 	loc->accuracy = *((float*)(&ei->i_gps.accuracy));
 	age = *((unsigned int *)(&ei->i_gps.age));
-	return (int) age;
+	temp = (long) age;
+	printk("%ld, %ld, %u", get_seconds(), temp, age);
+	temp = get_seconds() - temp;
+	return (int) temp;
 }
 
 static int ext2_mknod (struct inode * dir, struct dentry *dentry, int mode, dev_t rdev)

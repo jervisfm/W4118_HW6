@@ -3417,8 +3417,10 @@ int vfs_set_gps (struct inode *inode)
 
 	if (inode->i_op->set_gps_location != NULL)
 		ret = inode->i_op->set_gps_location(inode);
-	else
+	else {
 		ret = -ENOENT; /* No such GPS-capable file */
+		printk("WARNING: Failed to update file\n");
+	}
 
 	return ret;
 }

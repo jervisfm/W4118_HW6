@@ -175,21 +175,13 @@ static int read_gps(FILE *file, struct gps_location *result)
 static struct gps_location get_random_loc(int i)
 {
 	struct gps_location gps;
-	gps.accuracy = i;
-	gps.latitude = i;
-	gps.longitude = i;
+	gps.accuracy = i * 1.01;
+	gps.latitude = i * 1.01;
+	gps.longitude = i *1.01;
 	return gps;
 }
 
-int main2(int argc, char **argv);
 int main(int argc, char **argv)
-{
-	printf("HELLLLO\n");
-	main2(0, NULL);
-	return 0;
-}
-
-int main2(int argc, char **argv)
 {
 	/* daemonize  first */
 	struct sigaction sigact;
@@ -240,7 +232,7 @@ int main2(int argc, char **argv)
 			fprintf(log, "Warning: Failed to open LOC file"
 				      " for reading\n");
 			sleep(GPSD_FIX_FREQ);
-			continue;
+			return EXIT_FAILURE;
 		} else {
 			printf("Opened LOC file\n");
 		}

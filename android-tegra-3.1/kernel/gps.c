@@ -150,7 +150,6 @@ SYSCALL_DEFINE1(set_gps_location, struct gps_location __user *, loc)
 	/* Still to be implemented */
 
 	struct gps_location *k_gps = &kernel_gps.loc;
-
 	if (valid_gps(loc) != 0)
 		return -EINVAL;
 
@@ -159,6 +158,7 @@ SYSCALL_DEFINE1(set_gps_location, struct gps_location __user *, loc)
 		return -EFAULT;
 
 	write_lock(&gps_lock);
+	kernel_gps.timestamp = CURRENT_TIME;
 	memcpy(k_gps, loc, sizeof(struct gps_location));
 
 	printk("Updated Kernel GPS\n");
