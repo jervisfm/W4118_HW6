@@ -96,63 +96,17 @@ static struct kernel_gps kernel_gps = {
 /* Used to protect the gps_location against concurrent modification */
 static DEFINE_RWLOCK(gps_lock);
 
-/* For consistency, some lock (read/write) should be held when this method is
- * called. */
-static void print_gps(void)
-{
-	/* Kernel lacks support for floating points.
-	 * Will print in HEX instead */
-	unsigned long long int lat, lng;
-	unsigned int acc;
-	lat = *((unsigned long long int*) &kernel_gps.loc.latitude);
-	lng = *((unsigned long long int*) &kernel_gps.loc.longitude);
-	acc = *((unsigned int*) &kernel_gps.loc.accuracy);
-
-	printk("Latitude: %#llx\n Longitude: %#llx\n Accuracy: %#x",
-			lat, lng, acc);
-	double dd = 100.47;
-	double ee = 100;
-	unsigned long long int temp = *((unsigned long long int *)(&dd));
-	__le64 dd_le = cpu_to_le64(temp);
-	__u64 dd_u64 = le64_to_cpu(dd_le);
-
-	printk("\nreg double | %#llx \n", *((unsigned long long int * )(&dd)));
-	// cast dd to unsigned int
-
-	printk("rd le64 : %#llx\n", *((unsigned long long int * )(&dd_le)));
-	printk("rd u64  : %#llx\n", *((unsigned long long int * )(&dd_u64)));
-	printk("rd ctrl : %#llx\n", *((unsigned long long int * )(&temp)));
-
-
-	//printk("int double==== | %#llx \n", *((unsigned long long int * )(&ee)));
-
-
-
-	/* other Debugging / test code. DELETE LATER.
-	__le64 lat1, lng1;
-	__le32 acc1;
-	lat1 = cpu_to_le64(100);
-	lng1 = cpu_to_le64(1000);
-	acc1 = cpu_to_le32(100);
-	printk("Latitude: %#llx\n Longitude: %#llx\n Accuracy: %#x",
-			cpu_to_le64(100), cpu_to_le64(1000), cpu_to_le32(100));
-	printk("\n");
-	printk("Lat : %#llx | Lng: %#llx | Accuracy: %x\n===== ==== \n",
-		le64_to_cpu(lat1), le64_to_cpu(lng1), le32_to_cpu(acc1));
-	*/
-}
-
 static unsigned long long int double_to_long(const double d)
 {
 	unsigned long long int result;
-	result = *((unsigned long long int*)(&d));
+	result = *((unsigned long long int* )(&d));
 	return result;
 }
 
 static unsigned int float_to_int(const float f)
 {
 	unsigned int result;
-	result = *((unsigned int*)(&f));
+	result = *((unsigned int *)(&f));
 	return result;
 }
 
@@ -218,10 +172,8 @@ SYSCALL_DEFINE1(set_gps_location, struct gps_location __user *, loc)
 	if (current_uid() != 0 && current_euid() != 0)
 		return -EACCES;
 
-	if (valid_gps(loc) != 0) {
-		printk("Invalid GPS GIVEN  to setGPS ");
+	if (valid_gps(loc) != 0)
 		return -EINVAL;
-	}
 
 	if (copy_from_user(k_gps,
 			   loc, sizeof(struct gps_location)) != 0)
@@ -230,10 +182,6 @@ SYSCALL_DEFINE1(set_gps_location, struct gps_location __user *, loc)
 	write_lock(&gps_lock);
 	kernel_gps.timestamp = CURRENT_TIME;
 	memcpy(k_gps, loc, sizeof(struct gps_location));
-
-	printk("Updated Kernel GPS\n");
-	print_gps();
-	printk("\n");
 
 	write_unlock(&gps_lock);
 
@@ -252,7 +200,7 @@ static int can_access_file(const char *file)
 	if (file == NULL)
 		return 0;
 
-	if (is_directory(file)){
+	if (is_directory(file)) {
 		/* returns -1 on error */
 		ret = sys_open(file, O_DIRECTORY, O_RDONLY);
 		if (ret < 0)
@@ -321,28 +269,18 @@ static int get_file_gps_location(const char *kfile, struct gps_location *loc)
 	 * this case because the character string we're checking is
 	 * in kernel-address space
 	 */
-	if (kern_path(kfile, LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT, &kpath) != 0) {
-		printk("File Lookup Failed: %s\n", kfile);
+	if (kern_path(kfile, LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT, &kpath) != 0)
 		return -EAGAIN;
-	}
 
 	/* d_inode represents the inode of the looked up path */
 	d_inode = kpath.dentry->d_inode;
 
-	if (d_inode == NULL) {
-		printk("File Lookup Failed. Non-existent path: %s\n", kfile);
+	if (d_inode == NULL)
 		return -EINVAL;
-	}
 
 	/* Verify that the file path given is on a FS with GPS support */
-	if (!gps_supported(d_inode)) {
-		printk("GPS Lookup Not Supported: File (%s) "
-				"not on EXT FS with GPS support\n", kfile);
+	if (!gps_supported(d_inode))
 		return -ENODEV;
-	}
-
-	printk("Looking up GPS information for file : %s\n",
-			kpath.dentry->d_iname);
 
 	/* Make the System GPS Read Call.*/
 	ret =  vfs_get_gps(d_inode, loc);
@@ -377,17 +315,12 @@ SYSCALL_DEFINE2(get_gps_location,
 	int ret;
 	/* PATH_MAX is the maximum valid length of a filepath in UNIX */
 	int path_size = PATH_MAX + 1;
-	printk("\n********** GET GPS CALLED *********** \n");
-	if (pathname == NULL || loc == NULL) {
-		printk("\nError: Pathname or loc is NULL");
+	if (pathname == NULL || loc == NULL)
 		return -EINVAL;
-	}
 
 	kpathname = kcalloc(path_size, sizeof(char), GFP_KERNEL);
-	if (kpathname == NULL) {
-		printk("\nError: Failed to allocate memory \n");
+	if (kpathname == NULL)
 		return -ENOMEM;
-	}
 
 	ret = strncpy_from_user(kpathname, pathname, path_size);
 
@@ -395,7 +328,6 @@ SYSCALL_DEFINE2(get_gps_location,
 		kfree(kpathname);
 		return -EFAULT;
 	} else if (ret == path_size) { /* Path is too long */
-		printk("Given Path is too long\n");
 		kfree(kpathname);
 		return -ENAMETOOLONG;
 	}
@@ -406,30 +338,19 @@ SYSCALL_DEFINE2(get_gps_location,
 	 * Don't forget to free the kpathname memory too. */
 	if (!can_access_file(pathname)) {
 		kfree(kpathname);
-		printk("Error:  You cannot access the file");
 		return -EACCES;
-	} else {
-		printk("Success: You have read access to the file: %s\n",
-				kpathname);
 	}
-
 
 	ret = get_file_gps_location(kpathname, &kloc);
 
-
 	if (ret < 0) {
-		printk("Oops, failed to read GPS information for %s. Error %d\n",
-				kpathname, ret);
 		kfree(kpathname);
 		return -EAGAIN;
-	} else {
-		printk("\nSuccess:Successfully looked UP GPS info\n");
 	}
 
 	if (copy_to_user(loc, &kloc, sizeof(struct gps_location)) != 0) {
 		read_unlock(&gps_lock);
 		kfree(kpathname);
-		printk("\nError: copy TO user failed\n");
 		return -EFAULT;
 	}
 

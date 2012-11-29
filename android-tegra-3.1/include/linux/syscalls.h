@@ -848,6 +848,6 @@ asmlinkage long sys_setns(int fd, int nstype);
 
 asmlinkage long sys_set_gps_location(struct gps_location __user *loc);
 asmlinkage long sys_get_gps_location(const char __user *pathname,
-	     	 	 	 	 	 	 	 struct gps_location __user *loc);
+		struct gps_location __user *loc);
 
 #endif

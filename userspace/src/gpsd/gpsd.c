@@ -34,7 +34,7 @@
 #define true 1;
 #define false 0
 
-static int should_exit = 0;
+static int should_exit;
 
 /*
  * My own get line function. I am writing my own because the
@@ -80,8 +80,9 @@ static char *my_get_line(FILE *file)
 	return result;
 }
 
-static void sighandler(int signal) {
-	printf("Exit Signal received. Will terminate soon ... \n");
+static void sighandler(int signal)
+{
+	printf("Exit Signal received. Will terminate soon ...\n");
 	should_exit = 1;
 }
 
@@ -117,26 +118,26 @@ static int read_gps(FILE *file, struct gps_location *result)
 			break;
 		}
 		switch (i) {
-			case LATITUDE: {
-				lat_lng_value = strtod(line, NULL);
-				/* printf("lat=%f\n", lat_lng_value); */
-				result->latitude = lat_lng_value;
-				break;
-			}
-			case LONGITUDE: {
-				lat_lng_value = strtod(line, NULL);
-				/* printf("lng=%f\n", lat_lng_value); */
-				result->longitude = lat_lng_value;
-				break;
-			}
-			case ACCURACY: {
-				accuracy = strtof(line, NULL);
-				/* printf("%f\n", accuracy); */
-				result->accuracy = accuracy;
-				break;
-			}
-			default:
-				break;
+		case LATITUDE: {
+			lat_lng_value = strtod(line, NULL);
+			/* printf("lat=%f\n", lat_lng_value); */
+			result->latitude = lat_lng_value;
+			break;
+		}
+		case LONGITUDE: {
+			lat_lng_value = strtod(line, NULL);
+			/* printf("lng=%f\n", lat_lng_value); */
+			result->longitude = lat_lng_value;
+			break;
+		}
+		case ACCURACY: {
+			accuracy = strtof(line, NULL);
+			/* printf("%f\n", accuracy); */
+			result->accuracy = accuracy;
+			break;
+		}
+		default:
+			break;
 		}
 
 		if (errno != 0) {
@@ -148,7 +149,7 @@ static int read_gps(FILE *file, struct gps_location *result)
 			if (temp + 0 == 0 || lat_lng_value == 0) {
 				ret = -1;
 				printf("Error: Parsing number error(%d): %s\n",
-						errno, line );
+						errno, line);
 				break;
 			}
 		}
@@ -178,6 +179,7 @@ int main(int argc, char **argv)
 	int i = 0;
 	FILE *fp = NULL;
 	FILE *log = NULL;
+	should_exit = 0;
 
 
 	memset(&sigact, 0, sizeof(sigact));
@@ -222,8 +224,8 @@ int main(int argc, char **argv)
 		/* read GPS values stored in GPS_LOCATION_FILE */
 		fp = fopen(GPS_LOCATION_FILE, "r");
 		if (fp == NULL) {
-			fprintf(log, "Warning: Failed to open LOC file"
-				      " for reading. Quitting Daemon\n");
+			fprintf(log, "Warning: Failed to open LOC file"\
+					"for reading. Quitting Daemon\n");
 			sleep(GPSD_FIX_FREQ);
 			return EXIT_FAILURE;
 		} else {
@@ -248,10 +250,10 @@ int main(int argc, char **argv)
 		ret = syscall(SET_GPS, &location);
 
 		if (ret < 0)
-			fprintf(log, "Failed to update kernel"
+			fprintf(log, "Failed to update kernel"\
 				     " with new GPS (Error %d)\n", ret);
 		else
-			fprintf(log, "Successfully updated kernel with GPS \n");
+			fprintf(log, "Successfully updated kernel with GPS\n");
 
 		fclose(fp);
 		fflush(NULL);

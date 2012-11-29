@@ -357,7 +357,7 @@ struct ext2_inode {
 	 * kernel */
 	__u64	i_latitude; /* GPS Latitude (double - 64 bits) */
 	__u64	i_longitude; /* GPS Longitude (double - 64 bits) */
-	__u32 	i_accuracy; /* GPS accuracy in meters (int - 32 bits) */
+	__u32	i_accuracy; /* GPS accuracy in meters (int - 32 bits) */
 	/* At the moment when an inode is create/update, store the age
 	 * of the gps information (we get from the kernel) here. */
 	__u32	i_coord_age; /* int - 32 bits */

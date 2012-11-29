@@ -129,7 +129,7 @@ static int ext2_create (struct inode * dir, struct dentry * dentry, int mode, st
 /* Uses the latest gps information from the kernel and saves it to the
  * inode.
  * Returns 0 on success,  < 0 (i.e. -ve) on failure.   */
-int ext2_set_gps (struct inode *inode)
+int ext2_set_gps(struct inode *inode)
 {
 	struct timespec now, age;
 	unsigned int age_in_seconds;
@@ -140,7 +140,7 @@ int ext2_set_gps (struct inode *inode)
 	struct kernel_gps k_gps;
 	/* the gps info in the inode */
 	struct gps_on_disk *inode_gps = NULL;
-	//inode->i_mtime = inode->i_mtime;
+
 	struct ext2_inode_info *inode_in_ram = EXT2_I(inode);
 
 	if (inode_in_ram == NULL)
@@ -193,10 +193,8 @@ int ext2_set_gps (struct inode *inode)
 	 * the only that works properly and does not cause file system
 	 * corruption.
 	 * TODO: Investigate why this hack is necessary.  */
-	if (inode->i_state & I_DIRTY) {
-		printk("Ookay, if conditions is true ... marking dirty\n");
+	if (inode->i_state & I_DIRTY)
 		mark_inode_dirty(inode);
-	}
 
 	/* inode->i_sb->s_op->dirty_inode(inode, I_DIRTY_SYNC); */
 	write_unlock(&inode_in_ram->i_gps_lock);
@@ -204,7 +202,7 @@ int ext2_set_gps (struct inode *inode)
 }
 
 /* Reads back the gps information stored in the given inode. */
-int ext2_get_gps (struct inode *inode, struct gps_location *loc)
+int ext2_get_gps(struct inode *inode, struct gps_location *loc)
 {
 	/* TODO: still to be implemented */
 	struct inode *ext_inode = NULL;
@@ -247,10 +245,9 @@ int ext2_get_gps (struct inode *inode, struct gps_location *loc)
 	read_lock(&ei->i_gps_lock);
 	loc->latitude = *((double *)(&ei->i_gps.latitude));
 	loc->longitude = *((double *)(&ei->i_gps.longitude));
-	loc->accuracy = *((float*)(&ei->i_gps.accuracy));
+	loc->accuracy = *((float *)(&ei->i_gps.accuracy));
 	age = *((unsigned int *)(&ei->i_gps.age));
 	temp = (long) age;
-	printk("%ld, %ld, %u", get_seconds(), temp, age);
 	temp = get_seconds() - temp;
 	read_unlock(&ei->i_gps_lock);
 	return (int) temp;

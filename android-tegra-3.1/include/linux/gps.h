@@ -1,9 +1,3 @@
-/*
- * gps.h
- *
- *  Created on: Nov 30, 2012
- */
-
 #ifndef GPS_H_
 #define GPS_H_
 
@@ -27,16 +21,9 @@ struct kernel_gps {
 
 /* Represenation of the GPS information on disk */
 struct gps_on_disk {
-	// TO DELETE
-//	double latitude;
-//	double longitude;
-//	float accuracy;
-//	unsigned int age;
-
-
 	__u64	latitude; /* GPS Latitude (double - 64 bits) */
 	__u64	longitude; /* GPS Longitude (double - 64 bits) */
-	__u32 	accuracy; /* GPS accuracy in meters (int - 32 bits) */
+	__u32	accuracy; /* GPS accuracy in meters (int - 32 bits) */
 	__u32	age; /* int - 32 bits */
 };
 
@@ -47,9 +34,7 @@ void get_current_location(struct kernel_gps *result);
 /* GPS-related File System Related Functions.
  * These are defined in fs/namei.c file.  These declarations
  * are also available by including this file in the fs.h header.  */
-int vfs_get_gps (struct inode *inode, struct gps_location *loc);
-int vfs_set_gps (struct inode *inode);
-
-
+int vfs_get_gps(struct inode *inode, struct gps_location *loc);
+int vfs_set_gps(struct inode *inode);
 
 #endif /* GPS_H_ */

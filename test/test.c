@@ -24,9 +24,9 @@ static void print_gps(struct gps_location gps_location)
 {
 	unsigned long long int lat = 0, lng = 0;
 	unsigned int acc = 0;
-	lat = *((unsigned long long int*) &gps_location.latitude);
-	lng = *((unsigned long long int*) &gps_location.longitude);
-	acc = *((unsigned int*) &gps_location.accuracy);
+	lat = *((unsigned long long int *) &gps_location.latitude);
+	lng = *((unsigned long long int *) &gps_location.longitude);
+	acc = *((unsigned int *) &gps_location.accuracy);
 
 	printf("Latitude: %#llx\n Longitude: %#llx\n Accuracy: %#x\n",
 			lat, lng, acc);
@@ -72,7 +72,7 @@ static void test_write_read()
 	/* Retrieve File GPS Info From Kernel */
 	printf("About to Make System Call to Kernel to retrieve GPS info\n");
 	ret = syscall(GET_GPS, TEST_GPS_FILE, &loc);
-	if (ret < 0 ) {
+	if (ret < 0) {
 		perror("System call failed:");
 		return;
 	} else {
@@ -139,7 +139,7 @@ static void test_mod()
 	/* Retrieve File GPS Info From Kernel */
 	printf("About to Make System Call to Kernel to retrieve GPS info\n");
 	ret = syscall(GET_GPS, TEST_GPS_FILE, &loc);
-	if (ret < 0 ) {
+	if (ret < 0) {
 		perror("System call failed:");
 		return;
 	} else {
@@ -167,7 +167,7 @@ static void test_read()
 	/* Retrieve File GPS Info From Kernel */
 	printf("About to Make System Call to Kernel to retrieve GPS info\n");
 	ret = syscall(GET_GPS, TEST_GPS_FILE, &loc);
-	if (ret < 0 ) {
+	if (ret < 0) {
 		perror("System call failed:");
 		return;
 	} else {
@@ -196,19 +196,19 @@ static void test_gps()
 	/* Retrieve File GPS Info From Kernel */
 	printf("About to Make System Call to Kernel to retrieve GPS info\n");
 	ret = syscall(SET_GPS, &loc0);
-	if (ret < 0 ) {
+	if (ret < 0) {
 		perror("LOC0 Set GPS System call failed:");
 		print_gps(loc0);
 	}
 	ret = syscall(SET_GPS, &loc1);
-	if (ret < 0 ) {
+	if (ret < 0) {
 		perror("LOC1 Set GPS System call failed:");
 		print_gps(loc1);
 	} else {
 		printf("Syscall worked as expected\n");
 	}
 	ret = syscall(SET_GPS, &loc2);
-	if (ret < 0 ) {
+	if (ret < 0) {
 		perror("LOC2 Set GPS System call failed:");
 		print_gps(loc2);
 	} else {

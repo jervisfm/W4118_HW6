@@ -56,7 +56,7 @@ static int do_file_loc(const char *path)
 
 	/* Retrieve File GPS Info From Kernel */
 	ret = syscall(GET_GPS, path, &loc);
-	if (ret < 0 ) {
+	if (ret < 0) {
 		perror("GPS Retrieval System call failed:");
 		return -1;
 	} else {
@@ -87,7 +87,7 @@ int main(int argc, char **argv)
 
 
 	if (do_file_loc(argv[1]) < 0) {
-		printf("No GPS information: \n");
+		printf("No GPS information:\n");
 		return EXIT_FAILURE;
 	}
 

@@ -3386,7 +3386,7 @@ const struct inode_operations page_symlink_inode_operations = {
  * @returns - the age of the GPS information returned in seconds, or -ve
  * if an error occurs.
  */
-int vfs_get_gps (struct inode *inode, struct gps_location *loc)
+int vfs_get_gps(struct inode *inode, struct gps_location *loc)
 {
 	int ret = 0;
 	if (inode == NULL || loc == NULL)
@@ -3409,7 +3409,7 @@ int vfs_get_gps (struct inode *inode, struct gps_location *loc)
  * Note that it's up to the individual FSes to retrieve the GPS information.
  * See kernel/gps.c for a functions that exposes this information.
  */
-int vfs_set_gps (struct inode *inode)
+int vfs_set_gps(struct inode *inode)
 {
 	int ret = 0;
 	if (inode == NULL)
