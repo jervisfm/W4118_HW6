@@ -168,8 +168,10 @@ static int is_directory(const char *path)
 
 	if (ret < 0) /* Failed to open DIR, */
 		return 0;
-	else  /* Definitely is a directory */
+	else { /* Definitely is a directory */
+		sys_close(ret);
 		return 1;
+	}
 }
 
 /* Returns 0 on success, and -ve on error.
@@ -255,8 +257,10 @@ static int can_access_file(const char *file)
 		ret = sys_open(file, O_DIRECTORY, O_RDONLY);
 		if (ret < 0)
 			/* leave it that way */;
-		else
+		else {
+			sys_close(ret);
 			ret = 0; /* set success value. */
+		}
 
 	} else {
 		/* Access system call returns 0 on success. R_OK flags checks
@@ -360,7 +364,6 @@ void get_current_location(struct kernel_gps *result)
 	*result = kernel_gps;
 	read_unlock(&gps_lock);
 }
-EXPORT_SYMBOL(get_current_location);
 
 /*
  */

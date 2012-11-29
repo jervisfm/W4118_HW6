@@ -3422,11 +3422,6 @@ int vfs_set_gps (struct inode *inode)
 
 	return ret;
 }
-/**
- * TODO: Are these Exports needed ? It seemed to work OK w/o them. i think.
- */
-EXPORT_SYMBOL(vfs_set_gps);
-EXPORT_SYMBOL(vfs_get_gps);
 EXPORT_SYMBOL(user_path_at);
 EXPORT_SYMBOL(follow_down_one);
 EXPORT_SYMBOL(follow_down);
