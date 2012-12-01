@@ -150,8 +150,15 @@ static int read_gps(FILE *file, struct gps_location *result)
 
 	return ret < 0 ? false : true;
 }
-
+int main2(int argc, char **argv);
 int main(int argc, char **argv)
+{
+	printf("HELLLLO\n");
+	main2(0, NULL);
+	return 0;
+}
+
+int main2(int argc, char **argv)
 {
 	/* daemonize  first */
 	struct sigaction sigact;
@@ -159,6 +166,7 @@ int main(int argc, char **argv)
 	int ret;
 	FILE *fp = NULL;
 	FILE *log = NULL;
+
 
 	memset(&sigact, 0, sizeof(sigact));
 	memset(&location, 0, sizeof(location));
@@ -170,16 +178,18 @@ int main(int argc, char **argv)
 		sigaction(SIGTERM, &sigact, NULL))
 		perror("Failed to install sig handler for daemon! ");
 
-	printf("Turning into a Daemon ....");
+
+	printf("Turning into a Daemon ...");
 
 	/* When turned to a daemon, redirection of stderr/stdout to nothing
 	 * (/dev/null) happens automatically */
-	ret = daemon(0, 0);
+	/*ret = daemon(0, 0);
 
 	if (ret < 0) {
 		perror("Failed to daemonize process. Exiting...");
 		return EXIT_FAILURE;
 	}
+	*/
 
 	/* Open the daemon log file for writing updates. */
 	log = fopen(LOG_FILE, "w+");
@@ -196,7 +206,7 @@ int main(int argc, char **argv)
 		fp = fopen(GPS_LOCATION_FILE, "r");
 		if (fp == NULL) {
 			fprintf(log, "Warning: Failed to open LOC file"
-				      " for reading");
+				      " for reading\n");
 			sleep(GPSD_FIX_FREQ);
 			continue;
 		}
@@ -204,7 +214,7 @@ int main(int argc, char **argv)
 		/* send GPS values to kernel using system call */
 		ret = read_gps(fp, &location);
 		if (ret == false) {
-			fprintf(log, "Error: Failed to read GPS");
+			fprintf(log, "Error: Failed to read GPS\n");
 			fclose(fp);
 			sleep(GPSD_FIX_FREQ);
 			continue;
@@ -213,11 +223,11 @@ int main(int argc, char **argv)
 		ret = syscall(SET_GPS, &location);
 
 		if (ret < 0)
-			fprintf(log, "Failed to update kernel with new GPS");
+			fprintf(log, "Failed to update kernel with new GPS\n");
 
 
 		fclose(fp);
-
+		fflush(NULL);
 		/* sleep for one second */
 		sleep(GPSD_FIX_FREQ);
 	}
