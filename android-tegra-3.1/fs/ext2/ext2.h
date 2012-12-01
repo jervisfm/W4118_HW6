@@ -59,6 +59,12 @@ struct ext2_inode_info {
 	struct mutex truncate_mutex;
 	struct inode	vfs_inode;
 	struct list_head i_orphan;	/* unlinked but open inodes */
+	/* TODO: review this action.
+	 * We're embedding this here rather than directly modifying the
+	 * INODE structure because I fear that may break other file system
+	 * code if there any that relies on the fixed size of the
+	 * general Linux inode structure. */
+	struct kernel_gps gps;
 };
 
 /*
