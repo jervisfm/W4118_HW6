@@ -38,6 +38,8 @@ static int should_exit = 0;
  * GNU getline fucntion is not defined under the ARM
  * compiler we're using.
  *
+ * Caller is responsible for freeing located character string.
+ *
  * Returns the currently read line.
  */
 static char *my_get_line(FILE *file)
@@ -105,8 +107,8 @@ static int read_gps(FILE *file, struct gps_location *result)
 	float accuracy;
 	for (i = 0; i < NO_FIELDS; ++i) {
 		/* Note tht getline auto allocates memory */
-		ret = getline(&line, 0, file);
-		if (ret < 0) {
+		line = getline(file);
+		if (line == NULL) {
 			perror("Failed to read line from file stream");
 			break;
 		}
