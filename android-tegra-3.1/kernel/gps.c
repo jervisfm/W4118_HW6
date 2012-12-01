@@ -27,7 +27,7 @@ static DEFINE_RWLOCK(gps_lock);
  * called. */
 static void print_gps(void)
 {
-	pr_debug("Latitude: %f\n Longitude: %f\n Accuracy: %f",
+	printk("Latitude: %f\n Longitude: %f\n Accuracy: %f",
 			gps_location.latitude,
 			gps_location.longitude, gps_location.accuracy);
 }
@@ -48,9 +48,9 @@ SYSCALL_DEFINE1(set_gps_location, struct gps_location __user *, loc)
 	write_lock(&gps_lock);
 	memcpy(kernel_gps, loc, sizeof(struct gps_location));
 
-	pr_debug("Updated Kernel GPS\n");
+	printk("Updated Kernel GPS\n");
 	print_gps();
-	pr_debug("\n");
+	printk("\n");
 
 	write_unlock(&gps_lock);
 
