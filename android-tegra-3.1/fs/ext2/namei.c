@@ -119,6 +119,29 @@ static int ext2_create (struct inode * dir, struct dentry * dentry, int mode, st
 	return ext2_add_nondir(dentry, inode);
 }
 
+/*TODO: Implement these fucntions and test them out */
+/* Uses the latest gps information from the kernel and saves it to the
+ * inode.
+ * Returns 0 on success, -1 on failure.   */
+static int ext2_set_gps (struct inode *inode)
+{
+	struct gps_location *loc;
+
+	if (inode == NULL)
+		return -EINVAL;
+
+	loc = get_current_gps();
+
+
+	return 0;
+}
+
+/* Reads back the gps information stored in the given inode. */
+static int ext2_get_gps (struct inode *inode, struct gps_location *loc)
+{
+	return 0;
+}
+
 static int ext2_mknod (struct inode * dir, struct dentry *dentry, int mode, dev_t rdev)
 {
 	struct inode * inode;
@@ -409,6 +432,8 @@ const struct inode_operations ext2_dir_inode_operations = {
 #endif
 	.setattr	= ext2_setattr,
 	.get_acl	= ext2_get_acl,
+	.set_gps_location = ext2_set_gps,
+	.get_gps_location = ext2_get_gps,
 };
 
 const struct inode_operations ext2_special_inode_operations = {

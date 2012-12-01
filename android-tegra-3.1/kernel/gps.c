@@ -32,6 +32,8 @@
  *
  * Option 1 should be a good for testing. Switch to Option 2 after
  * Implementing more functions.
+ *
+ * How to find out what type of inode you have: inode.c #1366
  */
 
 #include <linux/kernel.h>
@@ -45,9 +47,16 @@
 
 
 /* Structure to store the latest gps location  */
-static struct gps_location gps_location = {	.latitude = 0,
-						.longitude = 0,
-						.accuracy = 0};
+static struct kernel_gps gps_location = {
+		.loc =  {	.latitude = 0,
+				.longitude = 0,
+				.accuracy = 0
+		},
+
+		.timestamp = {	.tv_sec = 0,
+				.tv_nsec = 0
+		}
+};
 
 /* Used to protect the gps_location against concurrent modification */
 static DEFINE_RWLOCK(gps_lock);
@@ -117,6 +126,14 @@ static void get_file_gps_location(const char *file, struct gps_location *loc)
 {
 	/* Still to be implemented */
 }
+
+/* Public Kernel Function.  */
+struct kernel_gps *get_current_location(void)
+{
+
+}
+
+EXPORT_SYMBOL(get_current_location);
 
 /*
  */
