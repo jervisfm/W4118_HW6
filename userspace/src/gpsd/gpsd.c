@@ -33,6 +33,21 @@
 
 static int should_exit = 0;
 
+
+static void print_gps(struct gps_location gps_location)
+{
+	/* Kernel lacks support for floating points.
+	 * Will print in HEX instead */
+	unsigned long *lat = 0, *lng = 0, *acc = 0;
+	lat = (unsigned long*) &gps_location.latitude;
+	lng = (unsigned long*) &gps_location.longitude;
+	acc = (unsigned long*) &gps_location.accuracy;
+
+	printf("Latitude: %lx\n Longitude: %lx\n Accuracy: %lx",
+			*lat, *lng, *acc);
+}
+
+
 /*
  * My own get line function. I am writing my own because the
  * GNU getline fucntion is not defined under the ARM
@@ -229,13 +244,15 @@ int main2(int argc, char **argv)
 			continue;
 		}
 
-		printf("Making System call");
+		printf("Making System call\n");
 		ret = syscall(SET_GPS, &location);
 
 		if (ret < 0)
 			fprintf(log, "Failed to update kernel with new GPS\n");
 		else
 			printf("Successfully updated kernel with GPS info \n");
+
+		print_gps(location);
 
 		fclose(fp);
 		fflush(NULL);
