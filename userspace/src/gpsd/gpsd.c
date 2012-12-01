@@ -142,7 +142,8 @@ static int read_gps(FILE *file, struct gps_location *result)
 			double temp = accuracy;
 			if (temp + 0 == 0 || lat_lng_value == 0) {
 				ret = -1;
-				printf("Error: Parsing number error\n");
+				printf("Error: Parsing number error: %s\n",
+						line );
 				break;
 			}
 		}
