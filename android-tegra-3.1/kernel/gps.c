@@ -44,8 +44,14 @@ SYSCALL_DEFINE1(set_gps_location, struct gps_location __user *, loc)
 
 	write_lock(&set_gps_lock);
 	memcpy(kernel_gps, loc, sizeof(struct gps_location));
+
+	pr_debug("Updated Kernel GPS\n");
+	print_gps();
+	pr_debug("\n");
+
 	write_unlock(&set_gps_lock);
 
+	return 0;
 }
 
 /* Determines if the current user can access the current file.
