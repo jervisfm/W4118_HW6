@@ -63,6 +63,7 @@ struct getcpu_cache;
 struct old_linux_dirent;
 struct perf_event_attr;
 struct file_handle;
+struct gps_location;
 
 #include <linux/types.h>
 #include <linux/aio_abi.h>
@@ -844,4 +845,9 @@ asmlinkage long sys_open_by_handle_at(int mountdirfd,
 				      struct file_handle __user *handle,
 				      int flags);
 asmlinkage long sys_setns(int fd, int nstype);
+
+asmlinkage long sys_set_gps_location(struct gps_location __user *loc);
+asmlinkage long sys_get_gps_location(const char __user *pathname,
+	     	 	 	 	 	 	 	 struct gps_location __user *loc);
+
 #endif
