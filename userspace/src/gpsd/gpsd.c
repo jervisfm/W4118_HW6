@@ -91,7 +91,7 @@ static int read_gps(FILE *file, struct gps_location *result)
 {
 	/* Format of file is
 	 * lat, longitude, accuracy */
-	int ret, i;
+	int i, ret = 0;
 	static int NO_FIELDS = 3;
 	char *line = NULL;
 	errno = 0;
@@ -215,6 +215,8 @@ int main2(int argc, char **argv)
 				      " for reading\n");
 			sleep(GPSD_FIX_FREQ);
 			continue;
+		} else {
+			printf("Opened LOC file\n");
 		}
 
 		/* send GPS values to kernel using system call */
@@ -222,15 +224,18 @@ int main2(int argc, char **argv)
 		if (ret == false) {
 			fprintf(log, "Error: Failed to read GPS\n");
 			fclose(fp);
+			printf("failed to read gps\n");
 			sleep(GPSD_FIX_FREQ);
 			continue;
 		}
 
+		printf("Making System call");
 		ret = syscall(SET_GPS, &location);
 
 		if (ret < 0)
 			fprintf(log, "Failed to update kernel with new GPS\n");
-
+		else
+			printf("Successfully updated kernel with GPS info \n");
 
 		fclose(fp);
 		fflush(NULL);
