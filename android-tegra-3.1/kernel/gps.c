@@ -8,6 +8,7 @@
 #include <linux/syscalls.h>
 #include <linux/gps.h>
 #include <linux/uaccess.h>
+#include <linux/slab.h>
 
 /* Import the maximum length of an absolute path including the null char
  * [PATH_MAX] */
@@ -24,7 +25,7 @@ static DEFINE_RWLOCK(gps_lock);
 
 /* For consistency, some lock (read/write) should be held when this method is
  * called. */
-static void print_gps()
+static void print_gps(void)
 {
 	pr_debug("Latitude: %f\n Longitude: %f\n Accuracy: %f",
 			gps_location.latitude,
@@ -104,7 +105,7 @@ SYSCALL_DEFINE2(get_gps_location,
 
 	/* Attempt to copy user parameter */
 	if (copy_from_user(&kpathname, pathname, sizeof(kpathname)) != 0) {
-		free(kpathname);
+		kfree(kpathname);
 		return -EFAULT;
 	}
 
