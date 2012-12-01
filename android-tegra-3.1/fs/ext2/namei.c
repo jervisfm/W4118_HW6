@@ -127,7 +127,8 @@ static int ext2_set_gps (struct inode *inode)
 {
 	struct timespec now, age;
 	unsigned int age_in_seconds;
-	long long unsigned int lat = 0, lng = 0;
+	//long long unsigned int lat = 0, lng = 0;
+	int lat = 0, lng = 0;
 	unsigned int accuracy = 0;
 
 	/* stores the current kernel gps */
@@ -158,11 +159,42 @@ static int ext2_set_gps (struct inode *inode)
 	lng = cpu_to_le64(k_gps.loc.longitude);
 	accuracy = cpu_to_le32(k_gps.loc.accuracy);
 
-	void *to, *from;
-	//from = &lat;
-	//to = &inode_gps->latitude;
+	long dd;
+	int ii = lat;
+	void *dest_void;
+	void *src_void;
+	// src_void = &ii;  // Commented out so that we still compiler.
+	dest_void = &dd;
 
-	my_memcpy(&to, &from, 100000);
+	//to = &inode_gps->latitude;
+	size_t count = 100;
+	char *dest =  (char *) dest_void;
+	char *src = (char *) src_void;
+
+	*dest = '2';
+	*src = '3';
+
+	/* TODO:
+	 * Cotinue from here.
+	 * -> Need to find a way to copy the bits into indoe_gps->latitude
+	 * etc.
+	 * Tried memcpy but even that did not work.
+	 *
+	 * issue seems to be that compiler does some (?optimizations)
+	 * that interpret the source, as a double, even after using
+	 * the cpu_to_le64 macro to convert to unsigned long long int.
+	 *
+	 * Next, work on the code below. Also make appropriate updates
+	 * to the code in inode.c in the write_inode() function and
+	 * ext2_iget() functions.
+	 *
+	 * */
+
+	while (count--)
+		//*tmp = *src;
+		//*tmp = *src;
+
+
 	//inode_gps->latitude = lat;
 //	inode_gps->longitude = cpu_to_le64(k_gps.loc.longitude);
 //	inode_gps->accuracy = cpu_to_le32(k_gps.loc.accuracy);
@@ -193,8 +225,6 @@ static int ext2_get_gps (struct inode *inode, struct gps_location *loc)
 
 	if (loc == NULL || inode == NULL)
 		return -EINVAL;
-
-
 
 
 	return 0;
