@@ -90,23 +90,26 @@ SYSCALL_DEFINE2(get_gps_location,
 	/* still to be implemented */
 
 	struct gps_location kloc;
-	char kpathname[PATH_MAX];
+	char *kpathname;
 
 	if (pathname == NULL || loc == NULL)
 		return -EINVAL;
 
 	memset(&kloc, 0, sizeof(kloc));
-	memset(&kpathname, 0, sizeof(kpathname));
+
+	kpathname = kcalloc(PATH_MAX, sizeof(char), GFP_KERNEL);
 
 	if (kpathname == NULL)
 		return -ENOMEM;
 
 	/* Attempt to copy user parameter */
-	if (copy_from_user(&kpathname, pathname, sizeof(kpathname)) != 0)
+	if (copy_from_user(&kpathname, pathname, sizeof(kpathname)) != 0) {
+		free(kpathname);
 		return -EFAULT;
+	}
 
-
-	/* TODO: Enable these checks when we implement the functions. */
+	/* TODO: Enable these checks when we implement the functions.
+	 * Don't forget to free the kpathname memory too. */
 	/* if (!valid_filepath(file))
 		return -EINVAL;
 
