@@ -16,14 +16,13 @@ static struct gps_location gps_location = {	.latitude = 0,
 /* Used to protect the gps_location against concurrent modification */
 static DEFINE_RWLOCK(gps_lock);
 
-
+/* For consistency, some lock (read/write) should be held when this method is
+ * called. */
 static void print_gps()
 {
-	read_lock(&gps_lock);
 	pr_debug("Latitude: %f\n Longitude: %f\n Accuracy: %f",
 			gps_location.latitude,
 			gps_location.longitude, gps_location.accuracy);
-	read_unlock(&gps_lock);
 }
 
 SYSCALL_DEFINE1(set_gps_location, struct gps_location __user *, loc)
@@ -46,8 +45,15 @@ SYSCALL_DEFINE1(set_gps_location, struct gps_location __user *, loc)
 }
 
 SYSCALL_DEFINE2(get_gps_location,
-				const char __user *, pathname,
-				struct gps_location __user *, loc) {
+		const char __user *, pathname,
+		struct gps_location __user *, loc)
+{
 	/* still to be implemented */
+
+
+	read_lock(&set_gps_lock);
+
+	read_unlock(&set_gps_lock);
+
 	return -EINVAL;
 }
