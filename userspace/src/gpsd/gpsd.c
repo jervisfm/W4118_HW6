@@ -27,6 +27,9 @@
 /* reading GPS coordinates (seconds) */
 #define GPSD_FIX_FREQ  1
 
+#define true 1;
+#define false 0
+
 static int should_exit = 0;
 
 static void sighandler(int signal) {
@@ -34,33 +37,65 @@ static void sighandler(int signal) {
 	should_exit = 1;
 }
 
-enum { LATITUDE = 0, LONGITUDE = 1, ACCURACY = 2}
+
+enum { LATITUDE = 0, LONGITUDE = 1, ACCURACY = 2};
 
 /* Reads gps values from given file.
  * Return 1 on success, 0 on error. */
 static int read_gps(FILE *file, struct gps_location *result)
 {
 	/* Format of file is
-	 * lat, longinute, accuracy */
+	 * lat, longitude, accuracy */
 	int ret, i;
 	static int NO_FIELDS = 3;
 	char *line = NULL;
-	ret = getline(&line, 0, file); /* getline auto allocates memory */
-	if (ret < 0)
-		perror("Failed to read line from file stream");
 
+	/* check input parameters */
+	if (file == NULL || result == NULL) {
+		printf("Warning: NULL parameters given to read_gps");
+		return false;
+	}
+
+	double lat_lng_value;
+	float accuracy;
 	for (i = 0; i < NO_FIELDS; ++i) {
+		/* Note tht getline auto allocates memory */
+		ret = getline(&line, 0, file);
+		if (ret < 0) {
+			perror("Failed to read line from file stream");
+			break;
+		}
 		switch (i) {
-			case value:
-
+			case LATITUDE: {
+				lat_lng_value = strtod(line, NULL);
+				result->latitude = lat_lng_value;
 				break;
+			}
+			case LONGITUDE: {
+				lat_lng_value = strtod(line, NULL);
+				result->longitude = lat_lng_value;
+				break;
+			}
+			case ACCURACY: {
+				accuracy = strtof(line, NULL);
+				result->accuracy = accuracy;
+				break;
+			}
 			default:
 				break;
 		}
-	}
-	strtod(line, NULL)
+		if (line != NULL)
+			free(line);
 
-	return ret < 0 ? 0 : 1;
+		if ((lat_lng_value == 0 || accuracy == 0)
+			&& errno != 0) { /* error happened */
+			ret = -1;
+			printf("Warning: Parsing number error\n");
+			break;
+		}
+	}
+
+	return ret < 0 ? false : true;
 }
 
 int main(int argc, char **argv)
