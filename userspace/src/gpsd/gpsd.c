@@ -72,7 +72,6 @@ static char *my_get_line(FILE *file)
 		result[i] = c;
 		++i;
 	}
-
 	/* Null terminate string */
 	result[i] = '\0';
 	return result;
@@ -95,6 +94,7 @@ static int read_gps(FILE *file, struct gps_location *result)
 	int ret, i;
 	static int NO_FIELDS = 3;
 	char *line = NULL;
+	errno = 0;
 
 	/* check input parameters */
 	if (file == NULL || result == NULL) {
@@ -108,6 +108,7 @@ static int read_gps(FILE *file, struct gps_location *result)
 
 		/* Note that getline auto allocates memory */
 		line = my_get_line(file);
+		/* printf("line = %s | ", line); */
 		if (line == NULL) {
 			perror("Failed to read line from file stream");
 			break;
@@ -115,24 +116,25 @@ static int read_gps(FILE *file, struct gps_location *result)
 		switch (i) {
 			case LATITUDE: {
 				lat_lng_value = strtod(line, NULL);
+				/* printf("lat=%f\n", lat_lng_value); */
 				result->latitude = lat_lng_value;
 				break;
 			}
 			case LONGITUDE: {
 				lat_lng_value = strtod(line, NULL);
+				/* printf("lng=%f\n", lat_lng_value); */
 				result->longitude = lat_lng_value;
 				break;
 			}
 			case ACCURACY: {
 				accuracy = strtof(line, NULL);
+				/* printf("%f\n", accuracy); */
 				result->accuracy = accuracy;
 				break;
 			}
 			default:
 				break;
 		}
-		if (line != NULL)
-			free(line);
 
 		if (errno != 0) {
 			/* This is a hack to get the code to compile.
@@ -142,11 +144,14 @@ static int read_gps(FILE *file, struct gps_location *result)
 			double temp = accuracy;
 			if (temp + 0 == 0 || lat_lng_value == 0) {
 				ret = -1;
-				printf("Error: Parsing number error: %s\n",
-						line );
+				printf("Error: Parsing number error(%d): %s\n",
+						errno, line );
 				break;
 			}
 		}
+
+		if (line != NULL)
+			free(line);
 	}
 
 	return ret < 0 ? false : true;
