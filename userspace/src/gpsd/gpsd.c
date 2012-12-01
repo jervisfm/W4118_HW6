@@ -106,8 +106,6 @@ static int read_gps(FILE *file, struct gps_location *result)
 	float accuracy;
 	for (i = 0; i < NO_FIELDS; ++i) {
 
-		int error = false;
-
 		/* Note that getline auto allocates memory */
 		line = my_get_line(file);
 		if (line == NULL) {
