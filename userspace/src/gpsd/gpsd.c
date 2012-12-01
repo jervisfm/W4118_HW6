@@ -204,13 +204,13 @@ int main2(int argc, char **argv)
 
 	/* When turned to a daemon, redirection of stderr/stdout to nothing
 	 * (/dev/null) happens automatically */
-	/*ret = daemon(0, 0);
+	ret = daemon(0, 0);
 
 	if (ret < 0) {
 		perror("Failed to daemonize process. Exiting...");
 		return EXIT_FAILURE;
 	}
-	*/
+
 
 	/* Open the daemon log file for writing updates. */
 	log = fopen(LOG_FILE, "w+");
@@ -239,20 +239,17 @@ int main2(int argc, char **argv)
 		if (ret == false) {
 			fprintf(log, "Error: Failed to read GPS\n");
 			fclose(fp);
-			printf("failed to read gps\n");
 			sleep(GPSD_FIX_FREQ);
 			continue;
 		}
 
-		printf("Making System call\n");
+		fprintf(log, "Making System call\n");
 		ret = syscall(SET_GPS, &location);
 
 		if (ret < 0)
 			fprintf(log, "Failed to update kernel with new GPS\n");
 		else
-			printf("Successfully updated kernel with GPS info \n");
-
-		print_gps(location);
+			fprintf(log, "Successfully updated kernel with GPS \n");
 
 		fclose(fp);
 		fflush(NULL);
