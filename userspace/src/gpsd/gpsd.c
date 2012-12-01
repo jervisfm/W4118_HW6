@@ -17,7 +17,7 @@
 
 #include "gpsd.h"
 
-/* SYstem call numbers */
+/* System call numbers */
 #define SET_GPS 376
 #define GET_GPS 377
 
