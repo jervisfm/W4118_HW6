@@ -60,7 +60,7 @@ static char *my_get_line(FILE *file)
 		return NULL;
 	}
 
-	for (c = fget(file); c != EOF && c != '\n'; c = fget(file)) {
+	for (c = fgetc(file); c != EOF && c != '\n'; c = fgetc(file)) {
 		/* resize if necessary */
 		if (i == size - 1) { /* we're about to overwrite null tmnator*/
 			size *= 2;
@@ -107,7 +107,7 @@ static int read_gps(FILE *file, struct gps_location *result)
 	float accuracy;
 	for (i = 0; i < NO_FIELDS; ++i) {
 		/* Note tht getline auto allocates memory */
-		line = getline(file);
+		line = my_get_line(file);
 		if (line == NULL) {
 			perror("Failed to read line from file stream");
 			break;
