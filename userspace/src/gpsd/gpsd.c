@@ -137,8 +137,12 @@ static int read_gps(FILE *file, struct gps_location *result)
 			free(line);
 
 		if (errno != 0) {
-			double accuracy_d = (double) accuracy;
-			if (accuracy_d == 0 || lat_lng_value == 0) {
+			/* This is a hack to get the code to compile.
+			 * Check the value of accuracy directly results in
+			 * a aeabi_fcmpeq undefined ref error.
+			 */
+			double temp = accuracy;
+			if (temp + 0 == 0 || lat_lng_value == 0) {
 				ret = -1;
 				printf("Error: Parsing number error\n");
 				break;
