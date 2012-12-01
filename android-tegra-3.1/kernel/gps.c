@@ -8,10 +8,41 @@
 #include <linux/syscalls.h>
 #include <linux/gps.h>
 
+/* Structure to store the latest gps location  */
+static struct gps_location gps_location = {	.latitude = 0,
+						.longitude = 0,
+						.accuracy = 0};
 
-SYSCALL_DEFINE1(set_gps_location, struct gps_location __user *, loc) {
+/* Used to protect the gps_location against concurrent modification */
+static DEFINE_RWLOCK(gps_lock);
+
+
+static void print_gps()
+{
+	read_lock(&gps_lock);
+	pr_debug("Latitude: %f\n Longitude: %f\n Accuracy: %f",
+			gps_location.latitude,
+			gps_location.longitude, gps_location.accuracy);
+	read_unlock(&gps_lock);
+}
+
+SYSCALL_DEFINE1(set_gps_location, struct gps_location __user *, loc)
+{
 	/* Still to be implemented */
-	return -EINVAL;
+
+	struct gps_location *kernel_gps = &gps_location;
+
+	if (loc == NULL)
+		return -EINVAL;
+
+	if (copy_from_user(kernel_gps,
+			   loc, sizeof(struct gps_location)) != 0)
+		return -EFAULT;
+
+	write_lock(&set_gps_lock);
+	memcpy(kernel_gps, loc, sizeof(struct gps_location));
+	write_unlock(&set_gps_lock);
+
 }
 
 SYSCALL_DEFINE2(get_gps_location,
