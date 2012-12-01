@@ -125,13 +125,27 @@ static int ext2_create (struct inode * dir, struct dentry * dentry, int mode, st
  * Returns 0 on success, -1 on failure.   */
 static int ext2_set_gps (struct inode *inode)
 {
-	struct gps_location *loc;
+	struct timespec age, now;
+	int age_in_secs;
+	struct kernel_gps *k_gps = NULL;
 
 	if (inode == NULL)
 		return -EINVAL;
 
-	loc = get_current_gps();
+	k_gps = get_current_location();
 
+	BUG_ON(k_gps == NULL);
+
+	inode->i_latitude = cpu_to_le64(k_gps->loc.latitude);
+	inode->i_longitude = cpu_to_le64(k_gps->loc.longitude);
+	inode->i_accuracy = cpu_to_le32(k_gps->loc.accuracy);
+
+	/* Compute the age of the GPS information in seconds
+	 * and store that */
+	getnstimeofday(&now);
+	age.tv_sec = now.tv_sec - k_gps->timestamp.tv_sec;
+	age_in_secs = (int) age.tv_sec; /* Convert to 32-bits */
+	inode->i_coord_age = cpu_to_le32(age_in_secs);
 
 	return 0;
 }

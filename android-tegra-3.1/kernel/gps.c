@@ -129,10 +129,17 @@ static void get_file_gps_location(const char *file, struct gps_location *loc)
 	/* Still to be implemented */
 }
 
-/* Public Kernel Function.  */
-struct kernel_gps *get_current_location(void)
+/* Public Kernel Function.
+ * Stores the current gps information in result.
+ */
+void get_current_location(struct kernel_gps *result)
 {
-	return &kernel_gps;
+	if (result == NULL)
+		return;
+
+	read_lock(&gps_lock);
+	*result = kernel_gps;
+	read_unlock(&gps_lock);
 }
 EXPORT_SYMBOL(get_current_location);
 

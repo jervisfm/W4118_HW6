@@ -1,5 +1,6 @@
 #include <linux/fs.h>
 #include <linux/ext2_fs.h>
+#include <linux/gps.h> /* GPS Support */
 
 /*
  * ext2 mount options

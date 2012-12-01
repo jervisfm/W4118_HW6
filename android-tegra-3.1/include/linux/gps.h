@@ -23,6 +23,6 @@ struct kernel_gps {
 
 /* This is a public interface method. It's meant to be available
  * in the kernel as a means of accessing current gps data. */
-struct kernel_gps *get_current_location(void);
+void get_current_location(struct kernel_gps *result);
 
 #endif /* GPS_H_ */
