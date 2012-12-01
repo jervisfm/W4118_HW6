@@ -103,10 +103,13 @@ int main(int argc, char **argv)
 
 	/* daemonize */
 	struct sigaction sigact;
+	struct gps_location location;
 	int ret;
 	FILE *fp = NULL;
 
 	memset(&sigact, 0, sizeof(sigact));
+	memset(&location, 0, sizeof(location));
+
 	sigact.sa_handler = &sighandler;
 
 	if (sigaction(SIGINT, &sigact, NULL) ||
@@ -114,31 +117,38 @@ int main(int argc, char **argv)
 		sigaction(SIGTERM, &sigact, NULL))
 		perror("Failed to install sig handler for daemon! ");
 
+	/* Turn to daemon. Redirection of stderr/stdout to nothing (/dev/null)
+	 * happens automatically */
+	ret = daemon(0, 0);
 
 	while (!should_exit) {
 		/* read GPS values stored in GPS_LOCATION_FILE */
 		fp = fopen(GPS_LOCATION_FILE, "r");
-		if (fp == NULL)
-			perror("Warning: Failed to open file for reading");
-
+		if (fp == NULL) {
+			perror("Warning: Failed to open LOC file for reading");
+			sleep(GPSD_FIX_FREQ);
+			continue;
+		}
 
 		/* send GPS values to kernel using system call */
-
-
-		ret = syscall(SET_GPS, NULL);
+		ret = read_gps(fp, &location);
+		if (ret == false) {
+			perror("Error: Failed to read GPS");
+			fclose(fp);
+			continue;
+		}
+		ret = syscall(SET_GPS, &location);
 
 		if (ret < 0)
 			perror("Failed to update kernel with new GPS");
 
 
+
+		fclose(fp);
+
 		/* sleep for one second */
 		sleep(GPSD_FIX_FREQ);
 	}
 
-	if (fp != NULL)
-		fclose(fp);
-
-
 	return EXIT_SUCCESS;
 }
-
