@@ -125,8 +125,6 @@ static int ext2_create (struct inode * dir, struct dentry * dentry, int mode, st
  * Returns 0 on success,  < 0 (i.e. -ve) on failure.   */
 static int ext2_set_gps (struct inode *inode)
 {
-	struct timespec age, now;
-	int age_in_secs;
 	/* stores the current kernel gps */
 	struct kernel_gps k_gps;
 	/* the gps info in the inode */
@@ -139,26 +137,18 @@ static int ext2_set_gps (struct inode *inode)
 	get_current_location(&k_gps);
 	inode_gps = &inode_in_ram->gps;
 
-	BUG_ON(k_gps == NULL || inode_gps == NULL);
+	BUG_ON(inode_gps == NULL);
 
-	inode_gps->loc.latitude = k_gps->loc.latitude;
-	inode_gps->loc.longitude = k_gps->loc.longitude;
-	inode_gps->loc.accuracy = k_gps->loc.accuracy;
+	inode_gps->loc.latitude = k_gps.loc.latitude;
+	inode_gps->loc.longitude = k_gps.loc.longitude;
+	inode_gps->loc.accuracy = k_gps.loc.accuracy;
 
 	/* Set the timestamp for the gps information. We'd be able
 	 * to compute the actual age when we do the actual write
-	 * of the inode to disk in write_inode function.
+	 * of the inode to disk in __write_inode() function in inode.c.
 	 */
-	inode_gps->timestamp = k_gps->timestamp;
+	inode_gps->timestamp = k_gps.timestamp;
 
-	/* Compute the age of the GPS information in seconds
-	 * and store that */
-	/* TO DELETE
-	getnstimeofday(&now);
-	age.tv_sec = now.tv_sec - k_gps->timestamp.tv_sec;
-	age_in_secs = (int) age.tv_sec;
-	inode_gps->i_coord_age = (age_in_secs);
-	*/
 	return 0;
 }
 
