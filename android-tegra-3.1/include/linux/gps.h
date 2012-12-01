@@ -21,6 +21,12 @@ struct kernel_gps {
 	struct timespec timestamp;
 };
 
+/* Represenation of the GPS information on disk */
+struct gps_on_disk {
+	struct gps_location loc;
+	unsigned int age;
+};
+
 /* This is a public interface method. It's meant to be available
  * in the kernel as a means of accessing current gps data. */
 void get_current_location(struct kernel_gps *result);

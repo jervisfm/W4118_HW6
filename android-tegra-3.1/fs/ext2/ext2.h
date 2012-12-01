@@ -64,7 +64,7 @@ struct ext2_inode_info {
 	 * INODE structure because I fear that may break other file system
 	 * code if there any that relies on the fixed size of the
 	 * general Linux inode structure. */
-	struct kernel_gps gps;
+	struct gps_on_disk i_gps;
 };
 
 /*

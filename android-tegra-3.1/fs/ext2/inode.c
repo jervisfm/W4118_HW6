@@ -1289,7 +1289,11 @@ void ext2_get_inode_flags(struct ext2_inode_info *ei)
 	if (flags & S_DIRSYNC)
 		ei->i_flags |= EXT2_DIRSYNC_FL;
 }
-
+/*
+ * TODO: Review this function.
+ * This seems to be the "read_inode" function that actually reads
+ * the ON-DISK inode into Memory.
+ */
 struct inode *ext2_iget (struct super_block *sb, unsigned long ino)
 {
 	struct ext2_inode_info *ei;
@@ -1328,6 +1332,10 @@ struct inode *ext2_iget (struct super_block *sb, unsigned long ino)
 	inode->i_mtime.tv_sec = (signed)le32_to_cpu(raw_inode->i_mtime);
 	inode->i_atime.tv_nsec = inode->i_mtime.tv_nsec = inode->i_ctime.tv_nsec = 0;
 	ei->i_dtime = le32_to_cpu(raw_inode->i_dtime);
+
+	/* TODO: Also Read the GPS Information from DISK */
+
+
 	/* We now have enough fields to check if the inode was active or not.
 	 * This is needed because nfsd might try to access dead inodes
 	 * the test is that same one that e2fsck uses
