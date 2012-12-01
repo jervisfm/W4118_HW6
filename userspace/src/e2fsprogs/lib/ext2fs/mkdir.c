@@ -87,6 +87,10 @@ errcode_t ext2fs_mkdir(ext2_filsys fs, ext2_ino_t parent, ext2_ino_t inum,
 	inode.i_links_count = 2;
 	inode.i_ctime = inode.i_atime = inode.i_mtime = fs->now ? fs->now : time(NULL);
 	inode.i_size = fs->blocksize;
+	/* Initialize gps location information upon new directory
+	 * creation.  */
+	inode.i_latitude = inode.i_longitude = inode.i_accuracy = 0;
+	inode.i_coord_age = 0;
 
 	/*
 	 * Write out the inode and inode data block
