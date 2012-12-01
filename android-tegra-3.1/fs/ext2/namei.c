@@ -190,9 +190,9 @@ static int ext2_set_gps (struct inode *inode)
 	 *
 	 * */
 
-	while (count--)
+	//while (count--)
 		//*tmp = *src;
-		//*tmp = *src;
+
 
 
 	//inode_gps->latitude = lat;

@@ -92,13 +92,26 @@ void *my_memcpy(void *dest, const void *src, size_t count)
 }
 EXPORT_SYMBOL(my_memcpy);
 
+/* Returns 1 on success, and -ve on error.
+ */
+static int valid_gps(struct gps_location *loc)
+{
+	if (loc == NULL)
+		return -EINVAL;
+
+	if (loc->latitude == 0 && loc->longitude == 0)
+		return -EINVAL;
+
+	return 1;
+}
+
 SYSCALL_DEFINE1(set_gps_location, struct gps_location __user *, loc)
 {
 	/* Still to be implemented */
 
 	struct gps_location *k_gps = &kernel_gps.loc;
 
-	if (loc == NULL)
+	if (valid_gps(loc))
 		return -EINVAL;
 
 	if (copy_from_user(k_gps,
