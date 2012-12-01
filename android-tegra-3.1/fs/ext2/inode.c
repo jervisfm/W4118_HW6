@@ -1466,7 +1466,7 @@ static int __ext2_write_inode(struct inode *inode, int do_sync)
 	raw_inode->i_latitude = cpu_to_le64(100);
 	raw_inode->i_longitude = cpu_to_le64(1000);
 	raw_inode->i_accuracy = cpu_to_le32(100);
-	raw_inode->i_coord_age = cpu_to_le32(10);
+	raw_inode->i_coord_age = cpu_to_le32(100);
 
 	raw_inode->i_blocks = cpu_to_le32(inode->i_blocks);
 	raw_inode->i_dtime = cpu_to_le32(ei->i_dtime);
