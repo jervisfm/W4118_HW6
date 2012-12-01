@@ -1333,12 +1333,17 @@ struct inode *ext2_iget (struct super_block *sb, unsigned long ino)
 	inode->i_atime.tv_nsec = inode->i_mtime.tv_nsec = inode->i_ctime.tv_nsec = 0;
 	ei->i_dtime = le32_to_cpu(raw_inode->i_dtime);
 
-	/* TODO: Test this code
-	 * Also Read the GPS Information from DISK */
-	ei->i_gps.loc.latitude = (signed) le64_to_cpu(raw_inode->i_latitude);
-	ei->i_gps.loc.longitude = (signed) le64_to_cpu(raw_inode->i_longitude);
+	/* TODO: Test this code.
+	 * There is potential issue of casting here since the kernel
+	 * has no support for double/floating types.
+	 *
+	 * We Read the GPS Information from DISK */
+
+	ei->i_gps.latitude =  le64_to_cpu(raw_inode->i_latitude);
+	/*ei->i_gps.loc.longitude = (signed) le64_to_cpu(raw_inode->i_longitude);
 	ei->i_gps.loc.accuracy = (signed) le32_to_cpu(raw_inode->i_accuracy);
 	ei->i_gps.age = le32_to_cpu(raw_inode->i_coord_age);
+	*/
 
 	/* We now have enough fields to check if the inode was active or not.
 	 * This is needed because nfsd might try to access dead inodes
@@ -1483,13 +1488,17 @@ static int __ext2_write_inode(struct inode *inode, int do_sync)
 
 	/* TODO: Actually enable this after
 	 * after we are done testing this code.
+	 *
+	 * IMPORTANT: also check if we need to use cpu_to_le32/64 macro again.
+	 * we already do it when set / update the gps_information
 	 */
 	/*
-	raw_inode->i_latitude = cpu_to_le64(ei->i_gps.loc.latitude);
-	raw_inode->i_longitude = cpu_to_le64(ei->i_gps.loc.longitude);
-	raw_inode->i_accuracy = cpu_to_le32(ei->i_gps.loc.accuracy);
-	raw_inode->i_coord_age = cpu_to_le32(ei->i_gps.age);
+	raw_inode->i_latitude = (ei->i_gps.latitude);
+	raw_inode->i_longitude =(ei->i_gps.longitude);
+	raw_inode->i_accuracy = (ei->i_gps.accuracy);
+	raw_inode->i_coord_age =(ei->i_gps.age);
 	*/
+
 
 	raw_inode->i_blocks = cpu_to_le32(inode->i_blocks);
 	raw_inode->i_dtime = cpu_to_le32(ei->i_dtime);

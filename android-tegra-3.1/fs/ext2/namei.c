@@ -127,6 +127,7 @@ static int ext2_set_gps (struct inode *inode)
 {
 	struct timespec now, age;
 	unsigned int age_in_seconds;
+	double lat = 0, lng = 0 , accuracy = 0;
 
 	/* stores the current kernel gps */
 	struct kernel_gps k_gps;
@@ -143,9 +144,19 @@ static int ext2_set_gps (struct inode *inode)
 
 	BUG_ON(inode_gps == NULL);
 
-	inode_gps->loc.latitude = k_gps.loc.latitude;
-	inode_gps->loc.longitude = k_gps.loc.longitude;
-	inode_gps->loc.accuracy = k_gps.loc.accuracy;
+	/* TODO:  Test and see if the double bits
+	 * are correctly preserved.  Saving coordinates to
+	 * local variables because direct assignment caused a compiler
+	 * error */
+	double tt = k_gps.loc.latitude;
+	lat = k_gps.loc.latitude;
+	lng = k_gps.loc.longitude;
+	accuracy = k_gps.loc.accuracy;
+	tt = lat ;
+	double xx  = cpu_to_le64(tt);
+	//inode_gps->latitude = cpu_to_le64(tt);
+//	inode_gps->longitude = cpu_to_le64(k_gps.loc.longitude);
+//	inode_gps->accuracy = cpu_to_le32(k_gps.loc.accuracy);
 
 	/* Set the timestamp for the gps information. We compute the age
 	 * now and store this information so that we can directly write it
@@ -153,9 +164,10 @@ static int ext2_set_gps (struct inode *inode)
 	 * __write_inode() function in inode.c.
 	 */
 	getnstimeofday(&now);
-	age.tv_sec = labs(now.tv_sec - k_gps.timestamp.tv_sec);
+	age.tv_sec = (now.tv_sec - k_gps.timestamp.tv_sec);
+	age.tv_sec = age.tv_sec < 0 ? -age.tv_sec : age.tv_sec;
 	age_in_seconds = (unsigned int) age.tv_sec;
-	inode_gps->age = age_in_seconds;
+	inode_gps->age = cpu_to_le32(age_in_seconds);
 
 	return 0;
 }
