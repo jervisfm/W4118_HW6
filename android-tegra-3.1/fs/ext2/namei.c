@@ -153,6 +153,7 @@ static int ext2_set_gps (struct inode *inode)
 /* Reads back the gps information stored in the given inode. */
 static int ext2_get_gps (struct inode *inode, struct gps_location *loc)
 {
+	/* TODO: still to be implemented */
 	return 0;
 }
 
