@@ -11,6 +11,12 @@
 
 #include <sys/syscall.h>
 
+struct gps_location {
+	double latitude;
+	double longitude;
+	float  accuracy;  /* in meters */
+};
+
 /* Use this file to access the most recent gps location
  * Provides in separate lines: latitude, longitude, accuracy */
 #define GPS_LOCATION_FILE "/data/media/gps_location.txt"
