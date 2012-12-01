@@ -2,7 +2,6 @@
  * gps.h
  *
  *  Created on: Nov 30, 2012
- *      Author: Jervis
  */
 
 #ifndef GPS_H_
