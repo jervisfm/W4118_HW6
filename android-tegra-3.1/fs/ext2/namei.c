@@ -132,6 +132,7 @@ static int ext2_set_gps (struct inode *inode)
 	struct kernel_gps k_gps;
 	/* the gps info in the inode */
 	struct gps_on_disk *inode_gps = NULL;
+	//inode->i_mtime = inode->i_mtime;
 	struct ext2_inode_info *inode_in_ram = EXT2_I(inode);
 
 	if (inode_in_ram == NULL)
@@ -163,6 +164,13 @@ static int ext2_set_gps (struct inode *inode)
 static int ext2_get_gps (struct inode *inode, struct gps_location *loc)
 {
 	/* TODO: still to be implemented */
+
+	if (loc == NULL || inode == NULL)
+		return -EINVAL;
+
+
+
+
 	return 0;
 }
 

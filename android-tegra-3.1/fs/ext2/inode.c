@@ -1476,14 +1476,13 @@ static int __ext2_write_inode(struct inode *inode, int do_sync)
 	/* TODO: Remove this test code, and replace with
 	 * commented out code below.
 	 */
-
 	raw_inode->i_latitude = cpu_to_le64(100);
 	raw_inode->i_longitude = cpu_to_le64(1000);
 	raw_inode->i_accuracy = cpu_to_le32(100);
 	raw_inode->i_coord_age = cpu_to_le32(100);
 
 	/* TODO: Actually enable this after
-	 * after we are done testing test.
+	 * after we are done testing this code.
 	 */
 	/*
 	raw_inode->i_latitude = cpu_to_le64(ei->i_gps.loc.latitude);
