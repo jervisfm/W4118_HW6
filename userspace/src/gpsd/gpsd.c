@@ -43,6 +43,7 @@ static void print_gps(struct gps_location gps_location)
 	lng = (unsigned long*) &gps_location.longitude;
 	acc = (unsigned long*) &gps_location.accuracy;
 
+	/* still doesn't appear to work */
 	printf("Latitude: %lx\n Longitude: %lx\n Accuracy: %lx",
 			*lat, *lng, *acc);
 }
