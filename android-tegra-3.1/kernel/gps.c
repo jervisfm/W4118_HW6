@@ -27,9 +27,10 @@ static DEFINE_RWLOCK(gps_lock);
  * called. */
 static void print_gps(void)
 {
-	printk("Latitude: %f\n Longitude: %f\n Accuracy: %f",
-			gps_location.latitude,
-			gps_location.longitude, gps_location.accuracy);
+	/* This does not work b'se kernel has no support for floats*/
+	pr_debug("Latitude: %d\n Longitude: %d\n Accuracy: %d",
+			(int) gps_location.latitude,
+			(int) gps_location.longitude, (int)gps_location.accuracy);
 }
 
 SYSCALL_DEFINE1(set_gps_location, struct gps_location __user *, loc)
