@@ -56,8 +56,10 @@
 
 /*
  * The second extended file system magic number
+ * Changed it from 0xEF53, as the gps modification technically mean
+ * this is no longer an EXT filesystem.
  */
-#define EXT2_SUPER_MAGIC	0xEF53
+#define EXT2_SUPER_MAGIC	0xEF54
 
 #ifdef __KERNEL__
 #define EXT2_SB(sb)	(&((sb)->u.ext2_sb))
@@ -351,6 +353,14 @@ struct ext2_inode {
 			__u32	m_i_reserved2[2];
 		} masix2;
 	} osd2;				/* OS dependent 2 */
+	/* Added here to match the new ext2 structure in the modified liux
+	 * kernel */
+	__u64	i_latitude; /* GPS Latitude (double - 64 bits) */
+	__u64	i_longitude; /* GPS Longitude (double - 64 bits) */
+	__u32 	i_accuracy; /* GPS accuracy in meters (int - 32 bits) */
+	/* At the moment when an inode is create/update, store the age
+	 * of the gps information (we get from the kernel) here. */
+	__u32	i_coord_age; /* int - 32 bits */
 };
 
 /*
