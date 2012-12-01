@@ -46,8 +46,10 @@
 #include <linux/limits.h>
 
 
-/* Structure to store the latest gps location  */
-static struct kernel_gps gps_location = {
+/* Structure to store the latest gps location.
+ * Access to this struct outside this file should be done
+ * through the get_current_location funtion.  */
+static struct kernel_gps kernel_gps = {
 		.loc =  {	.latitude = 0,
 				.longitude = 0,
 				.accuracy = 0
@@ -68,9 +70,9 @@ static void print_gps(void)
 	/* Kernel lacks support for floating points.
 	 * Will print in HEX instead */
 	unsigned long int *lat, *lng, *acc;
-	lat = (unsigned long int*) &gps_location.latitude;
-	lng = (unsigned long int*) &gps_location.longitude;
-	acc = (unsigned long int*) &gps_location.accuracy;
+	lat = (unsigned long int*) &kernel_gps.loc.latitude;
+	lng = (unsigned long int*) &kernel_gps.loc.longitude;
+	acc = (unsigned long int*) &kernel_gps.loc.accuracy;
 
 	/* currently disbaled */
 	pr_debug("Latitude: %x\n Longitude: %x\n Accuracy: %x",
@@ -81,17 +83,17 @@ SYSCALL_DEFINE1(set_gps_location, struct gps_location __user *, loc)
 {
 	/* Still to be implemented */
 
-	struct gps_location *kernel_gps = &gps_location;
+	struct gps_location *k_gps = &kernel_gps.loc;
 
 	if (loc == NULL)
 		return -EINVAL;
 
-	if (copy_from_user(kernel_gps,
+	if (copy_from_user(k_gps,
 			   loc, sizeof(struct gps_location)) != 0)
 		return -EFAULT;
 
 	write_lock(&gps_lock);
-	memcpy(kernel_gps, loc, sizeof(struct gps_location));
+	memcpy(k_gps, loc, sizeof(struct gps_location));
 
 	printk("Updated Kernel GPS\n");
 	print_gps();
@@ -130,9 +132,8 @@ static void get_file_gps_location(const char *file, struct gps_location *loc)
 /* Public Kernel Function.  */
 struct kernel_gps *get_current_location(void)
 {
-
+	return &kernel_gps;
 }
-
 EXPORT_SYMBOL(get_current_location);
 
 /*
