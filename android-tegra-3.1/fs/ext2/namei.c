@@ -148,13 +148,8 @@ static int ext2_set_gps (struct inode *inode)
 	 * are correctly preserved.  Saving coordinates to
 	 * local variables because direct assignment caused a compiler
 	 * error */
-	double tt = k_gps.loc.latitude;
-	lat = k_gps.loc.latitude;
-	lng = k_gps.loc.longitude;
-	accuracy = k_gps.loc.accuracy;
-	tt = lat ;
-	double xx  = cpu_to_le64(tt);
-	//inode_gps->latitude = cpu_to_le64(tt);
+
+	inode_gps->latitude = cpu_to_le64(k_gps.loc.latitude);
 //	inode_gps->longitude = cpu_to_le64(k_gps.loc.longitude);
 //	inode_gps->accuracy = cpu_to_le32(k_gps.loc.accuracy);
 

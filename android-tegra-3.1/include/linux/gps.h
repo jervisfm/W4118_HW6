@@ -23,10 +23,16 @@ struct kernel_gps {
 
 /* Represenation of the GPS information on disk */
 struct gps_on_disk {
-	__le64	latitude; /* GPS Latitude (double - 64 bits) */
-	__le64	longitude; /* GPS Longitude (double - 64 bits) */
-	__le32 	accuracy; /* GPS accuracy in meters (int - 32 bits) */
-	__le32	age; /* int - 32 bits */
+
+	double latitude;
+	double longitude;
+	float accuracy;
+	unsigned int age;
+	// TO DELETE
+	//__le64	latitude; /* GPS Latitude (double - 64 bits) */
+	//__le64	longitude; /* GPS Longitude (double - 64 bits) */
+	//__le32 	accuracy; /* GPS accuracy in meters (int - 32 bits) */
+	//__le32	age; /* int - 32 bits */
 };
 
 /* This is a public interface method. It's meant to be available
