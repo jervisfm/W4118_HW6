@@ -6,6 +6,7 @@
  * Homework 6
  *
  */
+#define _GNU_SOURCE
 #include <errno.h>
 #include <fcntl.h>
 #include <signal.h>
@@ -31,6 +32,50 @@
 #define false 0
 
 static int should_exit = 0;
+
+/*
+ * My own get line function. I am writing my own because the
+ * GNU getline fucntion is not defined under the ARM
+ * compiler we're using.
+ *
+ * Returns the currently read line.
+ */
+static char *my_get_line(FILE *file)
+{
+	int ret, i = 0;
+	char c;
+	int size = 2;
+	int done = false;
+
+	if (file == NULL) {
+		printf("Warn: NULL file given to my-get-line\n");
+		return NULL;
+	}
+
+	char *result = calloc(size, sizeof(char));
+	if (result == NULL) {
+		perror("Memory allocation failed");
+		return NULL;
+	}
+
+	for (c = fget(file); c != EOF && c != '\n'; c = fget(file)) {
+		/* resize if necessary */
+		if (i == size - 1) { /* we're about to overwrite null tmnator*/
+			size *= 2;
+			result = realloc(result, size);
+			if (result == NULL) {
+				perror("Memory Re-allocation failed");
+				return NULL;
+			}
+		}
+		result[i] = c;
+		++i;
+	}
+
+	/* Null terminate string */
+	result[i] = '\0';
+	return result;
+}
 
 static void sighandler(int signal) {
 	printf("Exit Signal received. Will terminate soon ... \n");
