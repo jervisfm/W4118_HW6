@@ -467,6 +467,8 @@ struct ext2_super_block {
 #define EXT2_CURRENT_REV	EXT2_GOOD_OLD_REV
 #define EXT2_MAX_SUPP_REV	EXT2_DYNAMIC_REV
 
+/* TODO: change this value to 256 ? In step 3 of assignment, we created
+ * a filesystem that had a Inode Size of 256 (This is the -I parameter) */
 #define EXT2_GOOD_OLD_INODE_SIZE 128
 
 /*

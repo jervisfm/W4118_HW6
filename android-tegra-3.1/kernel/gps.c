@@ -4,12 +4,41 @@
  *  Operating System Assignment 6
  */
 
+/*
+ * Useful notes / files / functions
+ *
+ * ext2_get_inode function - returns a raw ext_inode given INODE number
+ *
+ * How does the general inode strcture fit with the specific ext_2 structure?
+ * An 2nd ext2 structure called "struct ext2_inode_info" is used to keep an in
+ * memory representation of the relevant information from the on-disk ext2
+ * structure. This ext2_inode_info structure has the Inode number and it can
+ * be used to actually get the RAW ext2_inode structure. For an example,
+ * see __ext2_write_inode() in inode.c, #1424
+ *
+ * EXPORT_SYMBOL() is useful macro to make certain non-static function
+ * visilbe inside the kernel.
+ *
+ * Plan of actions
+ * We have two choices:
+ *
+ * 1) Add GPS information in ext2_write_inode() function. This is defined
+ * in super block and it is called when the data is *actually* written to
+ * disk.
+ *
+ * 2) Add the GPS information only when the file is modified or created.
+ * Will need to modify the specific functions defined in the file operationg
+ * pointers.
+ *
+ * Option 1 should be a good for testing. Switch to Option 2 after
+ * Implementing more functions.
+ */
+
 #include <linux/kernel.h>
 #include <linux/syscalls.h>
 #include <linux/gps.h>
 #include <linux/uaccess.h>
 #include <linux/slab.h>
-
 /* Import the maximum length of an absolute path including the null char
  * [PATH_MAX] */
 #include <linux/limits.h>

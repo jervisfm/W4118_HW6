@@ -1461,6 +1461,9 @@ static int __ext2_write_inode(struct inode *inode, int do_sync)
 	raw_inode->i_ctime = cpu_to_le32(inode->i_ctime.tv_sec);
 	raw_inode->i_mtime = cpu_to_le32(inode->i_mtime.tv_sec);
 
+	/* TODO: This is a MayBe Todo. It will a good place to write
+	 * the GPS information right here. */
+
 	raw_inode->i_blocks = cpu_to_le32(inode->i_blocks);
 	raw_inode->i_dtime = cpu_to_le32(ei->i_dtime);
 	raw_inode->i_flags = cpu_to_le32(ei->i_flags);
