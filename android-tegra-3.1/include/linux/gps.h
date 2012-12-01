@@ -40,4 +40,7 @@ struct gps_on_disk {
  * in the kernel as a means of accessing current gps data. */
 void get_current_location(struct kernel_gps *result);
 
+/* A separate memory copy implementation. */
+void *my_memcpy(void *dest, const void *src, size_t count);
+
 #endif /* GPS_H_ */

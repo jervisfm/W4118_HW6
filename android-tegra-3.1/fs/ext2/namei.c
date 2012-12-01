@@ -127,7 +127,8 @@ static int ext2_set_gps (struct inode *inode)
 {
 	struct timespec now, age;
 	unsigned int age_in_seconds;
-	double lat = 0, lng = 0 , accuracy = 0;
+	long long unsigned int lat = 0, lng = 0;
+	unsigned int accuracy = 0;
 
 	/* stores the current kernel gps */
 	struct kernel_gps k_gps;
@@ -146,13 +147,28 @@ static int ext2_set_gps (struct inode *inode)
 
 	/* TODO:  Test and see if the double bits
 	 * are correctly preserved.  Saving coordinates to
-	 * local variables because direct assignment caused a compiler
-	 * error */
+	 * local variables because direct assignment and then
+	 * copying the bits because otherwise compiler tries
+	 * to convert between double and integer which is not permitted
+	 * in the kernel.
+	 */
 
-	cpu_to_le64(k_gps.loc.latitude);
+	struct timespec t;
+	lat = cpu_to_le64(k_gps.loc.latitude);
+	lng = cpu_to_le64(k_gps.loc.longitude);
+	accuracy = cpu_to_le32(k_gps.loc.accuracy);
+
+	void *to, *from;
+	//from = &lat;
+	//to = &inode_gps->latitude;
+
+	my_memcpy(&to, &from, 100000);
+	//inode_gps->latitude = lat;
+//	inode_gps->longitude = cpu_to_le64(k_gps.loc.longitude);
+//	inode_gps->accuracy = cpu_to_le32(k_gps.loc.accuracy);
 
 
-	//inode_gps->latitude = cpu_to_le64(k_gps.loc.latitude);
+//	inode_gps->latitude = cpu_to_le64(k_gps.loc.latitude);
 //	inode_gps->longitude = cpu_to_le64(k_gps.loc.longitude);
 //	inode_gps->accuracy = cpu_to_le32(k_gps.loc.accuracy);
 
