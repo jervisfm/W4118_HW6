@@ -100,12 +100,12 @@ static int read_gps(FILE *file, struct gps_location *result)
 
 int main(int argc, char **argv)
 {
-
-	/* daemonize */
+	/* daemonize  first */
 	struct sigaction sigact;
 	struct gps_location location;
 	int ret;
 	FILE *fp = NULL;
+	FILE *log = NULL;
 
 	memset(&sigact, 0, sizeof(sigact));
 	memset(&location, 0, sizeof(location));
@@ -117,15 +117,33 @@ int main(int argc, char **argv)
 		sigaction(SIGTERM, &sigact, NULL))
 		perror("Failed to install sig handler for daemon! ");
 
-	/* Turn to daemon. Redirection of stderr/stdout to nothing (/dev/null)
-	 * happens automatically */
+	printf("Turning into a Daemon ....");
+
+	/* When turned to a daemon, redirection of stderr/stdout to nothing
+	 * (/dev/null) happens automatically */
 	ret = daemon(0, 0);
+
+	if (ret < 0) {
+		perror("Failed to daemonize process. Exiting...");
+		return EXIT_FAILURE;
+	}
+
+	/* Open the daemon log file for writing updates. */
+	log = fopen(LOG_FILE, "w+");
+	if (log == NULL) {
+		perror("Failed to open LOG file for daemon. Exiting...");
+		return EXIT_FAILURE;
+	} else
+		fprintf(log, "\n***** New Daemon Run *****\n");
+
+
 
 	while (!should_exit) {
 		/* read GPS values stored in GPS_LOCATION_FILE */
 		fp = fopen(GPS_LOCATION_FILE, "r");
 		if (fp == NULL) {
-			perror("Warning: Failed to open LOC file for reading");
+			fprintf(log, "Warning: Failed to open LOC file"
+				      " for reading");
 			sleep(GPSD_FIX_FREQ);
 			continue;
 		}
@@ -133,15 +151,16 @@ int main(int argc, char **argv)
 		/* send GPS values to kernel using system call */
 		ret = read_gps(fp, &location);
 		if (ret == false) {
-			perror("Error: Failed to read GPS");
+			fprintf(log, "Error: Failed to read GPS");
 			fclose(fp);
+			sleep(GPSD_FIX_FREQ);
 			continue;
 		}
+
 		ret = syscall(SET_GPS, &location);
 
 		if (ret < 0)
-			perror("Failed to update kernel with new GPS");
-
+			fprintf(log, "Failed to update kernel with new GPS");
 
 
 		fclose(fp);
@@ -150,5 +169,6 @@ int main(int argc, char **argv)
 		sleep(GPSD_FIX_FREQ);
 	}
 
+	fclose(log);
 	return EXIT_SUCCESS;
 }
