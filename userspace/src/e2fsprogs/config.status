@@ -431,7 +431,7 @@ Copyright (C) 2012 Free Software Foundation, Inc.
 This config.status script is free software; the Free Software Foundation
 gives unlimited permission to copy, distribute and modify it."
 
-ac_pwd='/home/w4118/hmwk5-grp/userspace/src/e2fsprogs'
+ac_pwd='/os/hmwk6/userspace/src/e2fsprogs'
 srcdir='.'
 INSTALL='/usr/bin/install -c'
 AWK='mawk'
@@ -632,8 +632,8 @@ S["BUILD_LDFLAGS"]=""
 S["BUILD_CFLAGS"]="-g -O2"
 S["INTL_FLAGS"]=""
 S["DO_TEST_SUITE"]="check"
-S["ET_DIR"]="/home/w4118/hmwk5-grp/userspace/src/e2fsprogs/lib/et"
-S["SS_DIR"]="/home/w4118/hmwk5-grp/userspace/src/e2fsprogs/lib/ss"
+S["ET_DIR"]="/os/hmwk6/userspace/src/e2fsprogs/lib/et"
+S["SS_DIR"]="/os/hmwk6/userspace/src/e2fsprogs/lib/ss"
 S["LDFLAG_STATIC"]="-static"
 S["root_sysconfdir"]="${root_prefix}/etc"
 S["root_libdir"]="${root_prefix}/lib"
