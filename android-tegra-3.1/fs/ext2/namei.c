@@ -149,7 +149,10 @@ static int ext2_set_gps (struct inode *inode)
 	 * local variables because direct assignment caused a compiler
 	 * error */
 
-	inode_gps->latitude = cpu_to_le64(k_gps.loc.latitude);
+	cpu_to_le64(k_gps.loc.latitude);
+
+
+	//inode_gps->latitude = cpu_to_le64(k_gps.loc.latitude);
 //	inode_gps->longitude = cpu_to_le64(k_gps.loc.longitude);
 //	inode_gps->accuracy = cpu_to_le32(k_gps.loc.accuracy);
 
