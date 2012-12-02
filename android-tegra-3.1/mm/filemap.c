@@ -2613,8 +2613,8 @@ ssize_t generic_file_aio_write(struct kiocb *iocb, const struct iovec *iov,
 	ret = __generic_file_aio_write(iocb, iov, nr_segs, &iocb->ki_pos);
 
 	/* Add GPS information */
-	ret = vfs_set_gps(inode);
-	WARN_ON(ret < 0);
+	gps_ret = vfs_set_gps(inode);
+	WARN_ON(gps_ret < 0);
 	mutex_unlock(&inode->i_mutex);
 
 	if (ret > 0 || ret == -EIOCBQUEUED) {
