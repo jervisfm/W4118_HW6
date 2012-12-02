@@ -40,6 +40,9 @@
  * Main TODO:
  * -> Okay, Next course of action is to actually test out the code
  * that we've written so far, i.e. step 3.
+ *
+ * -> write out a separate test program that just reads coordinates of file
+ * w/o creating a new file all together.(this may be a better test).
  */
 
 #include <linux/kernel.h>
