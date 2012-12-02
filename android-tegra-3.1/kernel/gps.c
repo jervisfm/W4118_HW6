@@ -79,19 +79,6 @@ static void print_gps(void)
 			*lat, *lng, *acc);
 }
 
-/* A separate memcpy function. I get an 'floating-point' error using the
- * the regular mempcy */
-void *my_memcpy(void *dest, const void *src, size_t count)
-{
-	char *tmp = dest;
-	const char *s = src;
-
-	while (count--)
-		*tmp++ = *s++;
-	return dest;
-}
-EXPORT_SYMBOL(my_memcpy);
-
 /* Returns 1 on success, and -ve on error.
  */
 static int valid_gps(struct gps_location *loc)
