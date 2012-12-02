@@ -229,8 +229,8 @@ static int get_file_gps_location(const char *file, struct gps_location *loc)
 		return -EINVAL;
 	}
 
-	/* Make the EXT2 GPS Call.*/
-
+	/* Make the System GPS Read Call.*/
+	return vfs_get_gps(d_inode, loc);
 	//struct file_system_type *fst; d_inode->i_ino;
 
 
