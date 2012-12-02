@@ -1484,10 +1484,10 @@ static int __ext2_write_inode(struct inode *inode, int do_sync)
 	/* TODO: Remove this test code, and replace with
 	 * commented out code below.
 	 */
-	raw_inode->i_latitude = cpu_to_le64(100);
-	raw_inode->i_longitude = cpu_to_le64(1000);
-	raw_inode->i_accuracy = cpu_to_le32(100);
-	raw_inode->i_coord_age = cpu_to_le32(100);
+	raw_inode->i_latitude = cpu_to_le64(100.59);
+	raw_inode->i_longitude = cpu_to_le64(1000.46);
+	raw_inode->i_accuracy = cpu_to_le32(100.37);
+	raw_inode->i_coord_age = cpu_to_le32(100.37);
 
 	if (printk_ratelimit())
 		printk("Writing Inode: %ld\n", inode->i_ino);

@@ -28,10 +28,22 @@ static void print_gps(struct gps_location gps_location)
 	lng = *((unsigned long long int*) &gps_location.longitude);
 	acc = *((unsigned int*) &gps_location.accuracy);
 
-	/* still doesn't appear to work */
 	printf("Latitude: %#llx\n Longitude: %#llx\n Accuracy: %#x",
 			lat, lng, acc);
 }
+
+static void print_gps_normal(struct gps_location gps_location)
+{
+	double lat = 0, lng = 0;
+	float acc = 0;
+	lat = *((double *) &gps_location.latitude);
+	lng = *((double *) &gps_location.longitude);
+	acc = *((double *) &gps_location.accuracy);
+
+	printf("Latitude: %f\n Longitude: %f\n Accuracy: %f",
+			lat, lng, acc);
+}
+
 
 static void test_write_read()
 {
@@ -67,6 +79,7 @@ static void test_write_read()
 		printf("System call worked\n");
 		printf("Retrieved GPS Information:\n");
 		print_gps(loc);
+		print_gps_normal(loc);
 		printf("\nAge of GPS info is %ld\n", ret);
 		printf("\n");
 	}
@@ -94,7 +107,8 @@ static void test_read()
 		printf("System call worked\n");
 		printf("Retrieved GPS Information:\n");
 		print_gps(loc);
-		printf("\nAge of GPS info is %d\n", ret);
+		print_gps_normal(loc);
+		printf("\nAge of GPS info is %ld\n", ret);
 		printf("\n");
 	}
 }
