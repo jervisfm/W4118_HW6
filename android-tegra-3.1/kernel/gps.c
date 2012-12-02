@@ -246,7 +246,6 @@ SYSCALL_DEFINE2(get_gps_location,
 		struct gps_location __user *, loc)
 {
 	/* still to be implemented */
-	return 0;
 	struct gps_location kloc;
 	char *kpathname;
 	int path_size = PATH_MAX + 1;
@@ -275,18 +274,15 @@ SYSCALL_DEFINE2(get_gps_location,
 		return -EACCES;
 	*/
 
-
 	read_lock(&gps_lock);
 
-	//get_file_gps_location(kpathname, &kloc);
+	get_file_gps_location(kpathname, &kloc);
 
-	if (copy_to_user(loc, &kloc, path_size) != 0) {
+	if (copy_to_user(loc, &kloc, sizeof(struct gps_location)) != 0) {
 		read_unlock(&gps_lock);
 		kfree(kpathname);
 		return -EFAULT;
 	}
-
-
 
 	read_unlock(&gps_lock);
 	kfree(kpathname);
