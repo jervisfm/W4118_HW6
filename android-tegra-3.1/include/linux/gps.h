@@ -7,6 +7,10 @@
 #ifndef GPS_H_
 #define GPS_H_
 
+/* The name of the EXT-2 file system which has
+ * GPS support. */
+#define EXT_FS_GPS "ext2"
+
 struct gps_location {
 	double latitude;
 	double longitude;
