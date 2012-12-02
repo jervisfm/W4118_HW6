@@ -1492,6 +1492,11 @@ static int __ext2_write_inode(struct inode *inode, int do_sync)
 	if (printk_ratelimit())
 		printk("Writing Inode: %ld\n", inode->i_ino);
 
+	/* TODO: Important, DELETE this temporary hack, which forces
+	 * writing back to disk.  */
+	 do_sync = 1;
+
+
 	/* TODO: Actually enable this after
 	 * after we are done testing this code.
 	 *
