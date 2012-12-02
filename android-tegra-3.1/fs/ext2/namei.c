@@ -146,11 +146,8 @@ static int ext2_set_gps (struct inode *inode)
 	BUG_ON(inode_gps == NULL);
 
 	/* TODO:  Test and see if the double bits
-	 * are correctly preserved.  Saving coordinates to
-	 * local variables because direct assignment and then
-	 * copying the bits because otherwise compiler tries
-	 * to convert between double and integer which is not permitted
-	 * in the kernel.
+	 * are correctly preserved.  Need to verify
+	 * the C-hackery, we do below actually works in practice.
 	 */
 
 	/*
