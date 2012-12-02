@@ -278,7 +278,7 @@ SYSCALL_DEFINE2(get_gps_location,
 
 	read_lock(&gps_lock);
 
-	get_file_gps_location(kpathname, &kloc);
+	//get_file_gps_location(kpathname, &kloc);
 
 	if (copy_to_user(loc, &kloc, path_size) != 0) {
 		read_unlock(&gps_lock);
