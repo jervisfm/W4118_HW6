@@ -162,6 +162,20 @@ static int valid_filepath(const char *file)
 	return 0;
 }
 
+/**
+ * Determine if the given @inode is on a FS that supports
+ * GPS.
+ * If So, Returns 1, else returns 0 when false.
+ */
+static int gps_supported(struct inode *inode)
+{
+	/* At the moment, only the EXT2_FS has gps enabled. */
+	if (strcmp(inode->i_sb->s_type->name, EXT2_FS_GPS) == 0)
+		return 1;
+	else
+		return 0;
+}
+
 /*
  * Retrieves the gps saved on the given file path and saves
  * this data in @loc parameter.
@@ -215,10 +229,10 @@ static int get_file_gps_location(const char *kfile, struct gps_location *loc)
 
 
 	/* Verify that the file path given is on a FS with GPS support */
-	if (strcmp(d_inode->i_sb->s_type->name, EXT_FS_GPS) != 0) {
-		printk("GPS Lookup Failed: File (%s) "
+	if (!gps_supported(d_inode)) {
+		printk("GPS Lookup Not Supported: File (%s) "
 				"not on EXT FS with GPS support\n", kfile);
-		return -EINVAL;
+		return -ENODEV;
 	}
 
 	/* Assume gps call to read file worked */

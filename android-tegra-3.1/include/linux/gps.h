@@ -9,7 +9,7 @@
 
 /* The name of the EXT-2 file system which has
  * GPS support. */
-#define EXT_FS_GPS "ext2"
+#define EXT2_FS_GPS "ext2"
 
 struct gps_location {
 	double latitude;
