@@ -43,6 +43,13 @@
  *
  * -> write out a separate test program that just reads coordinates of file
  * w/o creating a new file all together.(this may be a better test).
+ *
+ * -> Important: Look at ext2_iget() function in inode.c and see how the
+ * i_op function pointers are assigned. At the moment, we have support
+ * file operations, and also dir operation. do we want symlinks too??
+ *
+ * -> Implementing modification:
+ * Useful functions include update_file_time(), mark_inode_dirty()
  */
 
 #include <linux/kernel.h>

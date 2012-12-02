@@ -105,7 +105,7 @@ static int ext2_create (struct inode * dir, struct dentry * dentry, int mode, st
 	if (IS_ERR(inode))
 		return PTR_ERR(inode);
 
-	/* Set GPS information and if not successfuly */
+	/* Set GPS information and warn if not successful */
 	ret = ext2_set_gps(inode);
 	WARN_ON(ret != 0);
 
@@ -202,9 +202,6 @@ int ext2_get_gps (struct inode *inode, struct gps_location *loc)
 	unsigned int age = 0;
 	if (loc == NULL || inode == NULL)
 		return -EINVAL;
-
-	/* TODO: Important.
-	 * Return the -ENODEV error if the GPS info DOES not exist */
 
 	/*
 	 * Load the In Memory struct of the ext_inode
@@ -545,7 +542,7 @@ const struct inode_operations ext2_special_inode_operations = {
 	.setattr	= ext2_setattr,
 	.get_acl	= ext2_get_acl,
 	/*
-	 * TODO: to remove.
+	 * TODO: to remove ?
 	 */
 	.set_gps_location = ext2_set_gps,
 	.get_gps_location = ext2_get_gps,
