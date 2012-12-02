@@ -44,5 +44,12 @@ struct gps_on_disk {
  * in the kernel as a means of accessing current gps data. */
 void get_current_location(struct kernel_gps *result);
 
+/* GPS-related File System Related Functions.
+ * These are defined in fs/namei.c file.  These declarations
+ * are also available by including this file in the fs.h header.  */
+int vfs_get_gps (struct inode *inode, struct gps_location *loc);
+int vfs_set_gps (struct inode *inode);
+
+
 
 #endif /* GPS_H_ */

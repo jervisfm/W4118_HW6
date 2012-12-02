@@ -10,6 +10,8 @@
 #include <linux/ioctl.h>
 #include <linux/blk_types.h>
 #include <linux/types.h>
+/* Add GPS support functions */
+#include <linux/gps.h>
 
 /*
  * It's silly to have NR_OPEN bigger than NR_FILE, but you can change

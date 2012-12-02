@@ -3378,6 +3378,53 @@ const struct inode_operations page_symlink_inode_operations = {
 	.put_link	= page_put_link,
 };
 
+/**
+ * vfs_get_gsp - retrieves the gps information for the given
+ * file (i.e. inode).
+ * @inode - the inode to retrieve and read gps information for.
+ * @loc - store the retrieved gps information in this structure.
+ * @returns - the age of the GPS information returned in seconds, or -ve
+ * if an error occurs.
+ */
+int vfs_get_gps (struct inode *inode, struct gps_location *loc)
+{
+	int ret = 0;
+	if (inode == NULL || loc == NULL)
+		return -EINVAL;
+
+	if (inode->i_op->get_gps_location != NULL)
+		ret = inode->i_op->get_gps_location(inode, loc);
+	else
+		ret = -ENOENT; /* No such GPS-capable file */
+
+	return ret;
+}
+
+/**
+ * vfs_set_gps - A generic function that sets gps on a file (inode) if
+ * that operation is defined for the given inode.
+ * @inode - the inode to set the gps information for.
+ * @returns - 0 on success and -ve on error.
+ *
+ * Note that it's up to the individual FSes to retrieve the GPS information.
+ * See kernel/gps.c for a functions that exposes this information.
+ */
+int vfs_set_gps (struct inode *inode)
+{
+	int ret = 0;
+	if (inode == NULL)
+		return -EINVAL;
+
+	if (inode->i_op->set_gps_location != NULL)
+		ret = inode->i_op->set_gps_location(inode);
+	else
+		ret = -ENOENT; /* No such GPS-capable file*/
+
+	return ret;
+}
+
+EXPORT_SYMBOL(vfs_set_gps);
+EXPORT_SYMBOL(vgs_get_gps);
 EXPORT_SYMBOL(user_path_at);
 EXPORT_SYMBOL(follow_down_one);
 EXPORT_SYMBOL(follow_down);

@@ -207,7 +207,6 @@ static int ext2_get_gps (struct inode *inode, struct gps_location *loc)
 	ext_inode = ext2_iget(inode->i_sb, inode->i_ino);
 	ei = EXT2_I(ext_inode);
 
-
 	/* From my study of the code, all of the *inode structures
 	 * should be embedded with the ext2_inode_info structure.
 	 * Let's just do a test sanity check to make verify this.
