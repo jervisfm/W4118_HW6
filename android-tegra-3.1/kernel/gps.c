@@ -162,18 +162,17 @@ static int valid_filepath(const char *file)
 /*
  * Retrieves the gps saved on the given file path and saves
  * this data in @loc parameter.
+ * @kfile is already a kernel allocated string.
  * It returns the age of the data as an int.
  */
-static int get_file_gps_location(const char *file, struct gps_location *loc)
+static int get_file_gps_location(const char *kfile, struct gps_location *loc)
 {
-	char *kfile;
 	int ret;
 	struct inode *d_inode;
 	struct path kpath = { .mnt = NULL, .dentry = NULL} ;
-	int string_size = strlen(file) + 1;
 
 	/* Still to be implemented */
-	if (file == NULL || loc == NULL)
+	if (kfile == NULL || loc == NULL)
 		return -EINVAL;
 
 	/* TODO: enable these checks when their functions
@@ -185,14 +184,7 @@ static int get_file_gps_location(const char *file, struct gps_location *loc)
 		return;
 	*/
 
-	kfile = kcalloc(string_size, sizeof(char), GFP_KERNEL);
-	if (kfile == NULL)
-		return -ENOMEM;
 
-	if (copy_from_user(kfile, file, string_size) != 0) {
-		kfree(kfile);
-		return -EFAULT;
-	}
 	/*
 	 * After looking at namei.c file in /fs, I determined
 	 * path_lookup is the function we want to use.
@@ -207,7 +199,6 @@ static int get_file_gps_location(const char *file, struct gps_location *loc)
 	 * I don't think so, but just check to be sure. */
 	if (kern_path(kfile, LOOKUP_DIRECTORY | LOOKUP_FOLLOW, &kpath) != 0) {
 		printk("File Lookup Failed: %s\n", kfile);
-		kfree(kfile);
 		return -EAGAIN;
 	}
 
@@ -216,7 +207,6 @@ static int get_file_gps_location(const char *file, struct gps_location *loc)
 
 	if (d_inode == NULL) {
 		printk("File Lookup Failed. Non-existent path: %s\n", kfile);
-		kfree(kfile);
 		return -EINVAL;
 	}
 
@@ -225,7 +215,6 @@ static int get_file_gps_location(const char *file, struct gps_location *loc)
 	if (strcmp(d_inode->i_sb->s_type->name, EXT_FS_GPS) != 0) {
 		printk("GPS Lookup Failed: File (%s) "
 				"not on EXT FS with GPS support\n", kfile);
-		kfree(kfile);
 		return -EINVAL;
 	}
 
@@ -273,7 +262,7 @@ SYSCALL_DEFINE2(get_gps_location,
 		return -ENOMEM;
 
 	/* Attempt to copy user parameter */
-	if (copy_from_user(&kpathname, pathname, path_size) != 0) {
+	if (copy_from_user(kpathname, pathname, path_size) != 0) {
 		kfree(kpathname);
 		return -EFAULT;
 	}
@@ -301,7 +290,7 @@ SYSCALL_DEFINE2(get_gps_location,
 
 
 	read_unlock(&gps_lock);
-
+	kfree(kpathname);
 	/* TODO:
 	 * On success, the system call should return the i_coord_age value
 	 * of the inode associated with the path.*/
