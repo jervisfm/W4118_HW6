@@ -1559,7 +1559,8 @@ static int __ext2_write_inode(struct inode *inode, int do_sync)
 			printk ("IO error syncing ext2 inode [%s:%08lx]\n",
 				sb->s_id, (unsigned long) ino);
 			err = -EIO;
-		}
+		} else
+			printk("Synced changes to DISK...\n");
 	}
 	ei->i_state &= ~EXT2_STATE_NEW;
 	brelse (bh);
