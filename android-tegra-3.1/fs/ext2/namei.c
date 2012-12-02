@@ -233,7 +233,7 @@ int ext2_get_gps (struct inode *inode, struct gps_location *loc)
 	loc->longitude = *((double *)(&ei->i_gps.longitude));
 	loc->accuracy = *((float*)(&ei->i_gps.accuracy));
 	age = *((unsigned int *)(&ei->i_gps.age));
-	return age;
+	return (int) age;
 }
 
 static int ext2_mknod (struct inode * dir, struct dentry *dentry, int mode, dev_t rdev)

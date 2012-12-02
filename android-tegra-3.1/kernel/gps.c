@@ -301,9 +301,12 @@ SYSCALL_DEFINE2(get_gps_location,
 
 	ret = get_file_gps_location(kpathname, &kloc);
 
-	if (ret < 0)
-		printk("Oops, failed to GPS information for %s. Error %d\n",
-				kpathname, ret );
+	if (ret < 0) {
+		printk("Oops, failed to read GPS information for %s. Error %d\n",
+				kpathname, ret);
+		kfree(kpathname);
+		return -EAGAIN;
+	}
 
 	if (copy_to_user(loc, &kloc, sizeof(struct gps_location)) != 0) {
 		read_unlock(&gps_lock);
@@ -316,5 +319,5 @@ SYSCALL_DEFINE2(get_gps_location,
 	/* TODO:
 	 * On success, the system call should return the i_coord_age value
 	 * of the inode associated with the path.*/
-	return 0;
+	return ret;
 }

@@ -35,7 +35,7 @@ static void print_gps(struct gps_location gps_location)
 
 static void test_write_read()
 {
-	int ret;
+	long int ret;
 	struct gps_location loc;
 	FILE *fp = NULL;
 
@@ -67,14 +67,14 @@ static void test_write_read()
 		printf("System call worked\n");
 		printf("Retrieved GPS Information:\n");
 		print_gps(loc);
-		printf("Age of GPS info is %d\n", ret);
+		printf("\nAge of GPS info is %ld\n", ret);
 		printf("\n");
 	}
 }
 
 static void test_read()
 {
-	int ret;
+	long int ret;
 	struct gps_location loc;
 
 	printf("Reading Test GPS Program\n");
@@ -94,7 +94,7 @@ static void test_read()
 		printf("System call worked\n");
 		printf("Retrieved GPS Information:\n");
 		print_gps(loc);
-		printf("Age of GPS info is %d\n", ret);
+		printf("\nAge of GPS info is %d\n", ret);
 		printf("\n");
 	}
 }
