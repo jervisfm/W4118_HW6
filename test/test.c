@@ -51,7 +51,7 @@ static void test()
 		printf("Failed to open Test GPS File: %s\n", TEST_GPS_FILE);
 		return;
 	}
-	printf("File Open succeeded");
+	printf("File Open succeeded\n");
 	fprintf(fp, "Hello World at Time T = %ld\n", time(NULL));
 	fflush(NULL);
 	fclose(fp);
