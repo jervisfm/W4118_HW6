@@ -85,6 +85,73 @@ static void test_write_read()
 	}
 }
 
+/**
+ * Check if a file exits. Returns 1 if true or 0 if false.
+ */
+static int file_exists(char *filename)
+{
+	FILE *fp = NULL;
+	fp = fopen(filename, "r");
+	if (fp == NULL)
+		return 0;
+	else
+		return 1;
+}
+
+static void test_mod()
+{
+	long int ret;
+	struct gps_location loc;
+	FILE *fp = NULL;
+
+	printf("File Modification Test GPS Program\n");
+	memset(&loc, 0, sizeof(loc));
+
+	if (!file_exists(TEST_GPS_FILE)) {
+		printf("File does not exist: %s\n", TEST_GPS_FILE);
+		return;
+	}
+
+	ret = syscall(GET_GPS, TEST_GPS_FILE, &loc);
+
+	if (ret < 0) {
+		perror("Warning : Unable to load initial GPS data");
+		return;
+	}
+
+	printf("Starting GPS Info:\n");
+	print_gps(loc);
+
+
+	/* Open existing File and write to it */
+	fp = fopen(TEST_GPS_FILE, "r");
+	printf("Opening file ...\n");
+	if (fp == NULL) {
+		printf("Failed to open Test GPS File: %s\n", TEST_GPS_FILE);
+		return;
+	}
+	printf("File Open succeeded. Proceeding to modification...\n");
+	fprintf(fp, "Hello World at Time T = %ld\n", time(NULL));
+	fflush(NULL);
+	printf("File write succeeded\n");
+	fclose(fp);
+
+	/* Retrieve File GPS Info From Kernel */
+	printf("About to Make System Call to Kernel to retrieve GPS info\n");
+	ret = syscall(GET_GPS, TEST_GPS_FILE, &loc);
+	if (ret < 0 ) {
+		perror("System call failed:");
+		return;
+	} else {
+		printf("System call worked\n");
+		printf("Retrieved GPS Information:\n");
+		print_gps(loc);
+		print_gps_normal(loc);
+		printf("\nAge of GPS info is %ld\n", ret);
+		printf("\n");
+	}
+}
+
 static void test_read()
 {
 	long int ret;
@@ -118,6 +185,7 @@ static void do_nothing()
 	return;
 	test_read();
 	test_write_read();
+	test_mod();
 }
 
 int main(int argc, char **argv)
@@ -126,6 +194,4 @@ int main(int argc, char **argv)
 	test_write_read();
 	//test_read();
 	return 0;
-
-
 }
