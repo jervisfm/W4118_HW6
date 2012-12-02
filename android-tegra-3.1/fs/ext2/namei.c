@@ -127,8 +127,8 @@ static int ext2_set_gps (struct inode *inode)
 {
 	struct timespec now, age;
 	unsigned int age_in_seconds;
-	__le64 lat = 0, lng = 0;
-	__le32 accuracy = 0;
+	__u64 lat = 0, lng = 0;
+	__u32 accuracy = 0;
 
 	/* stores the current kernel gps */
 	struct kernel_gps k_gps;
