@@ -23,12 +23,12 @@ struct kernel_gps {
 
 /* Represenation of the GPS information on disk */
 struct gps_on_disk {
-	/* // TO DELETE
-	double latitude;
-	double longitude;
-	float accuracy;
-	unsigned int age;
-	*/
+	// TO DELETE
+//	double latitude;
+//	double longitude;
+//	float accuracy;
+//	unsigned int age;
+
 
 	__le64	latitude; /* GPS Latitude (double - 64 bits) */
 	__le64	longitude; /* GPS Longitude (double - 64 bits) */

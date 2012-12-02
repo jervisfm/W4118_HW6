@@ -1340,9 +1340,10 @@ struct inode *ext2_iget (struct super_block *sb, unsigned long ino)
 	 * We Read the GPS Information from DISK */
 
 	ei->i_gps.latitude =  le64_to_cpu(raw_inode->i_latitude);
-	/*ei->i_gps.loc.longitude = (signed) le64_to_cpu(raw_inode->i_longitude);
-	ei->i_gps.loc.accuracy = (signed) le32_to_cpu(raw_inode->i_accuracy);
+	ei->i_gps.longitude =  le64_to_cpu(raw_inode->i_longitude);
+	ei->i_gps.accuracy = le32_to_cpu(raw_inode->i_accuracy);
 	ei->i_gps.age = le32_to_cpu(raw_inode->i_coord_age);
+	/*
 	*/
 
 	/* We now have enough fields to check if the inode was active or not.

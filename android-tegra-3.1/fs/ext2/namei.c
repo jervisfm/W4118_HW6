@@ -193,7 +193,20 @@ static int ext2_set_gps (struct inode *inode)
 	//while (count--)
 		//*tmp = *src;
 
+	/*
+	 * short Repo case.
+	 */
+	struct gps_location gl;
+	// gl.latitude = 0;
+	unsigned long long tmp = cpu_to_le64( *((unsigned long long*)(&gl.latitude)) );
+	inode_gps->latitude = tmp ; // This causes an error
 
+	/*
+	 *
+	 * gl = k_gps.loc;
+	gl.latitude = 0;
+	gl.latitude = 2.2;
+	 */
 
 	//inode_gps->latitude = lat;
 //	inode_gps->longitude = cpu_to_le64(k_gps.loc.longitude);
