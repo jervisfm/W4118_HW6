@@ -36,9 +36,9 @@ static void print_gps_normal(struct gps_location gps_location)
 {
 	double lat = 0, lng = 0;
 	float acc = 0;
-	lat = *((double *) &gps_location.latitude);
-	lng = *((double *) &gps_location.longitude);
-	acc = *((double *) &gps_location.accuracy);
+	lat = gps_location.latitude;
+	lng = gps_location.longitude;
+	acc = gps_location.accuracy;
 
 	printf("Latitude: %f\n Longitude: %f\n Accuracy: %f",
 			lat, lng, acc);
