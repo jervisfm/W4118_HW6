@@ -196,7 +196,7 @@ static int get_file_gps_location(const char *kfile, struct gps_location *loc)
 
 	/* TODO: check if we need the LOOKUP_AUTOMOUNT flag as well ?
 	 * I don't think so, but just check to be sure. */
-	if (kern_path(kfile, LOOKUP_DIRECTORY | LOOKUP_FOLLOW, &kpath) != 0) {
+	if (kern_path(kfile, LOOKUP_DIRECTORY | LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT, &kpath) != 0) {
 		printk("File Lookup Failed: %s\n", kfile);
 		return -EAGAIN;
 	}
