@@ -140,6 +140,9 @@ extern long ext2_compat_ioctl(struct file *, unsigned int, unsigned long);
 
 /* namei.c */
 struct dentry *ext2_get_parent(struct dentry *child);
+/* GPS Stuff */
+extern int ext2_get_gps (struct inode *inode, struct gps_location *loc);
+extern int ext2_set_gps (struct inode *inode);
 
 /* super.c */
 extern void ext2_error (struct super_block *, const char *, const char *, ...)

@@ -428,7 +428,9 @@ static int find_group_other(struct super_block *sb, struct inode *parent)
 found:
 	return group;
 }
-
+/**
+ * TODO: IMPORTANT Look at this function. update it.
+ */
 struct inode *ext2_new_inode(struct inode *dir, int mode,
 			     const struct qstr *qstr)
 {

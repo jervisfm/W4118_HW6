@@ -221,6 +221,10 @@ static int get_file_gps_location(const char *kfile, struct gps_location *loc)
 		return -EINVAL;
 	}
 
+	/* Assume gps call to read file worked */
+	printk("Looking up GPS information for file : %s\n",
+			kpath.dentry->d_iname);
+
 	/* Make the System GPS Read Call.*/
 	return vfs_get_gps(d_inode, loc);
 
@@ -252,6 +256,7 @@ SYSCALL_DEFINE2(get_gps_location,
 	/* still to be implemented */
 	struct gps_location kloc;
 	char *kpathname;
+	int ret;
 	int path_size = PATH_MAX + 1;
 	if (pathname == NULL || loc == NULL)
 		return -EINVAL;
@@ -280,7 +285,11 @@ SYSCALL_DEFINE2(get_gps_location,
 
 	read_lock(&gps_lock);
 
-	get_file_gps_location(kpathname, &kloc);
+	ret = get_file_gps_location(kpathname, &kloc);
+
+	if (ret < 0)
+		printk("Oops, failed to GPS information for %s. Error %d\n",
+				kpathname, ret );
 
 	if (copy_to_user(loc, &kloc, sizeof(struct gps_location)) != 0) {
 		read_unlock(&gps_lock);

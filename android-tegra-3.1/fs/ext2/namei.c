@@ -123,7 +123,7 @@ static int ext2_create (struct inode * dir, struct dentry * dentry, int mode, st
 /* Uses the latest gps information from the kernel and saves it to the
  * inode.
  * Returns 0 on success,  < 0 (i.e. -ve) on failure.   */
-static int ext2_set_gps (struct inode *inode)
+int ext2_set_gps (struct inode *inode)
 {
 	struct timespec now, age;
 	unsigned int age_in_seconds;
@@ -187,7 +187,7 @@ static int ext2_set_gps (struct inode *inode)
 }
 
 /* Reads back the gps information stored in the given inode. */
-static int ext2_get_gps (struct inode *inode, struct gps_location *loc)
+int ext2_get_gps (struct inode *inode, struct gps_location *loc)
 {
 	/* TODO: still to be implemented */
 	struct inode *ext_inode = NULL;
@@ -526,8 +526,6 @@ const struct inode_operations ext2_dir_inode_operations = {
 #endif
 	.setattr	= ext2_setattr,
 	.get_acl	= ext2_get_acl,
-	.set_gps_location = ext2_set_gps,
-	.get_gps_location = ext2_get_gps,
 };
 
 const struct inode_operations ext2_special_inode_operations = {
@@ -539,4 +537,9 @@ const struct inode_operations ext2_special_inode_operations = {
 #endif
 	.setattr	= ext2_setattr,
 	.get_acl	= ext2_get_acl,
+	/*
+	 * TODO: to remove.
+	 */
+	.set_gps_location = ext2_set_gps,
+	.get_gps_location = ext2_get_gps,
 };

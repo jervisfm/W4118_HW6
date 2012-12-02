@@ -33,13 +33,13 @@ static void print_gps(struct gps_location gps_location)
 			lat, lng, acc);
 }
 
-static void test()
+static void test_write_read()
 {
 	int ret;
 	struct gps_location loc;
 	FILE *fp = NULL;
 
-	printf("Test GPS Program\n");
+	printf("Write-Read Test GPS Program\n");
 	memset(&loc, 0, sizeof(loc));
 
 	printf("Starting GPS Info:\n");
@@ -71,8 +71,45 @@ static void test()
 	}
 }
 
+static void test_read()
+{
+	int ret;
+	struct gps_location loc;
+
+	printf("Reading Test GPS Program\n");
+	memset(&loc, 0, sizeof(loc));
+
+	printf("Starting GPS Info:\n");
+	print_gps(loc);
+
+
+	/* Retrieve File GPS Info From Kernel */
+	printf("About to Make System Call to Kernel to retrieve GPS info\n");
+	ret = syscall(GET_GPS, TEST_GPS_FILE, &loc);
+	if (ret < 0 ) {
+		perror("System call failed:");
+		return;
+	} else {
+		printf("System call worked\n");
+		printf("Retrieved GPS Information:\n");
+		print_gps(loc);
+		printf("\n");
+	}
+}
+
+static void do_nothing()
+{
+	return;
+	test_read();
+	test_write_read();
+}
+
 int main(int argc, char **argv)
 {
-	test();
+	do_nothing();
+	//test_write_read();
+	test_read();
 	return 0;
+
+
 }
