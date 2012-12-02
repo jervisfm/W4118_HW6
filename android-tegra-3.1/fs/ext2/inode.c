@@ -1489,6 +1489,9 @@ static int __ext2_write_inode(struct inode *inode, int do_sync)
 	raw_inode->i_accuracy = cpu_to_le32(100);
 	raw_inode->i_coord_age = cpu_to_le32(100);
 
+	if (prink_ratelimit())
+		printk("Writing Inode: %d\n", inode->i_ino);
+
 	/* TODO: Actually enable this after
 	 * after we are done testing this code.
 	 *
