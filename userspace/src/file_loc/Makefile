@@ -30,7 +30,7 @@ LD = arm-none-linux-gnueabi-ld
 default: $(SOURCES) $(TARGET)
 
 kernel_headers:
-	cd $(KERNEL_SRC); make headers_install
+	cd $(KERNEL_SRC); make ARCH=arm headers_install
 
 $(TARGET): kernel_headers $(OBJECTS)
 	@echo [ARM-LD] $@
