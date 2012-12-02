@@ -128,7 +128,7 @@ static int ext2_set_gps (struct inode *inode)
 	struct timespec now, age;
 	unsigned int age_in_seconds;
 	__le64 lat = 0, lng = 0;
-	unsigned int accuracy = 0;
+	__le32 accuracy = 0;
 
 	/* stores the current kernel gps */
 	struct kernel_gps k_gps;
@@ -153,74 +153,22 @@ static int ext2_set_gps (struct inode *inode)
 	 * in the kernel.
 	 */
 
-	struct timespec t;
 	/*
 	 * Following the typedef declarations,
 	 * le64 == unsigned long long.
 	 * Should not use le64* directly, b'se that won't do
 	 * what you think it does (since le64 is a typedef).
+	 *
+	 * We do this C-hackery here because the kernel does not
+	 * support floating points directly.
 	 */
 	lat = cpu_to_le64(*((unsigned long long *)&k_gps.loc.latitude));
 	lng = cpu_to_le64(*((unsigned long long *)&k_gps.loc.longitude));
 	accuracy = cpu_to_le32(*((unsigned int *)&k_gps.loc.accuracy));
 
-	long dd;
-	int ii = lat;
-	void *dest_void;
-	void *src_void;
-	// src_void = &ii;  // Commented out so that we still compiler.
-	dest_void = &dd;
-
-	//to = &inode_gps->latitude;
-	size_t count = 100;
-	char *dest =  (char *) dest_void;
-	char *src = (char *) src_void;
-
-	*dest = '2';
-	*src = '3';
-
-	/* TODO:
-	 * Cotinue from here.
-	 * -> Need to find a way to copy the bits into indoe_gps->latitude
-	 * etc.
-	 * Tried memcpy but even that did not work.
-	 *
-	 * issue seems to be that compiler does some (?optimizations)
-	 * that interpret the source, as a double, even after using
-	 * the cpu_to_le64 macro to convert to unsigned long long int.
-	 *
-	 * Next, work on the code below. Also make appropriate updates
-	 * to the code in inode.c in the write_inode() function and
-	 * ext2_iget() functions.
-	 *
-	 * */
-
-	//while (count--)
-		//*tmp = *src;
-
-	/*
-	 * short Repo case.
-	 */
-	struct gps_location gl;
-	// gl.latitude = 0;
-	//unsigned long long tmp = cpu_to_le64( *((unsigned long long*)(&gl.latitude)) );
-	//inode_gps->latitude = tmp ; // This causes an error
-
-	/*
-	 *
-	 * gl = k_gps.loc;
-	gl.latitude = 0;
-	gl.latitude = 2.2;
-	 */
-
-	//inode_gps->latitude = lat;
-//	inode_gps->longitude = cpu_to_le64(k_gps.loc.longitude);
-//	inode_gps->accuracy = cpu_to_le32(k_gps.loc.accuracy);
-
-
-//	inode_gps->latitude = cpu_to_le64(k_gps.loc.latitude);
-//	inode_gps->longitude = cpu_to_le64(k_gps.loc.longitude);
-//	inode_gps->accuracy = cpu_to_le32(k_gps.loc.accuracy);
+	inode_gps->latitude = lat;
+	inode_gps->longitude = lng;
+	inode_gps->accuracy = accuracy;
 
 	/* Set the timestamp for the gps information. We compute the age
 	 * now and store this information so that we can directly write it
