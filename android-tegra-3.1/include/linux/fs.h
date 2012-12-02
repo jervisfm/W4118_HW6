@@ -10,8 +10,6 @@
 #include <linux/ioctl.h>
 #include <linux/blk_types.h>
 #include <linux/types.h>
-/* Add GPS support functions */
-#include <linux/gps.h>
 
 /*
  * It's silly to have NR_OPEN bigger than NR_FILE, but you can change
@@ -398,6 +396,9 @@ struct inodes_stat_t {
 #include <linux/atomic.h>
 
 #include <asm/byteorder.h>
+
+/* Add GPS support functions */
+#include <linux/gps.h>
 
 struct export_operations;
 struct hd_geometry;
