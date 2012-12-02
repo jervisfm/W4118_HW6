@@ -190,6 +190,7 @@ static int ext2_get_gps (struct inode *inode, struct gps_location *loc)
 {
 	/* TODO: still to be implemented */
 
+	int age = 0;
 	if (loc == NULL || inode == NULL)
 		return -EINVAL;
 
@@ -218,11 +219,15 @@ static int ext2_get_gps (struct inode *inode, struct gps_location *loc)
 	struct ext2_inode *raw_inode = ext2_get_inode(sb, ino, &bh);
 	*/
 
-	ei->
-
-
-
-	return 0;
+	/*
+	 * Use C pointer hackery again, to convert the stored bits
+	 * back to a double.
+	 */
+	loc->latitude = *((double *)(&ei->i_gps.latitude));
+	loc->longitude = *((double *)(&ei->i_gps.longitude));
+	loc->accuracy = *((float*)(&ei->i_gps.accuracy));
+	age = *((int *)(&ei->i_gps.age));
+	return age;
 }
 
 static int ext2_mknod (struct inode * dir, struct dentry *dentry, int mode, dev_t rdev)
