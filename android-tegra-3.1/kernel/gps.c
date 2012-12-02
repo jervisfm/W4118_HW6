@@ -261,19 +261,19 @@ SYSCALL_DEFINE2(get_gps_location,
 
 	struct gps_location kloc;
 	char *kpathname;
-
+	int path_size = PATH_MAX + 1;
 	if (pathname == NULL || loc == NULL)
 		return -EINVAL;
 
 	memset(&kloc, 0, sizeof(kloc));
 
-	kpathname = kcalloc(PATH_MAX, sizeof(char), GFP_KERNEL);
+	kpathname = kcalloc(path_size, sizeof(char), GFP_KERNEL);
 
 	if (kpathname == NULL)
 		return -ENOMEM;
 
 	/* Attempt to copy user parameter */
-	if (copy_from_user(&kpathname, pathname, sizeof(kpathname)) != 0) {
+	if (copy_from_user(&kpathname, pathname, path_size) != 0) {
 		kfree(kpathname);
 		return -EFAULT;
 	}
@@ -292,8 +292,9 @@ SYSCALL_DEFINE2(get_gps_location,
 
 	get_file_gps_location(kpathname, &kloc);
 
-	if (copy_to_user(loc, &kloc, sizeof(kloc)) != 0) {
+	if (copy_to_user(loc, &kloc, path_size) != 0) {
 		read_unlock(&gps_lock);
+		kfree(kpathname);
 		return -EFAULT;
 	}
 
