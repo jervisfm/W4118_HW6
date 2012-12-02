@@ -127,8 +127,7 @@ static int ext2_set_gps (struct inode *inode)
 {
 	struct timespec now, age;
 	unsigned int age_in_seconds;
-	//long long unsigned int lat = 0, lng = 0;
-	int lat = 0, lng = 0;
+	__le64 lat = 0, lng = 0;
 	unsigned int accuracy = 0;
 
 	/* stores the current kernel gps */
@@ -155,9 +154,15 @@ static int ext2_set_gps (struct inode *inode)
 	 */
 
 	struct timespec t;
-	lat = cpu_to_le64(k_gps.loc.latitude);
-	lng = cpu_to_le64(k_gps.loc.longitude);
-	accuracy = cpu_to_le32(k_gps.loc.accuracy);
+	/*
+	 * Following the typedef declarations,
+	 * le64 == unsigned long long.
+	 * Should not use le64* directly, b'se that won't do
+	 * what you think it does (since le64 is a typedef).
+	 */
+	lat = cpu_to_le64(*((unsigned long long *)&k_gps.loc.latitude));
+	lng = cpu_to_le64(*((unsigned long long *)&k_gps.loc.longitude));
+	accuracy = cpu_to_le32(*((unsigned int *)&k_gps.loc.accuracy));
 
 	long dd;
 	int ii = lat;
@@ -198,8 +203,8 @@ static int ext2_set_gps (struct inode *inode)
 	 */
 	struct gps_location gl;
 	// gl.latitude = 0;
-	unsigned long long tmp = cpu_to_le64( *((unsigned long long*)(&gl.latitude)) );
-	inode_gps->latitude = tmp ; // This causes an error
+	//unsigned long long tmp = cpu_to_le64( *((unsigned long long*)(&gl.latitude)) );
+	//inode_gps->latitude = tmp ; // This causes an error
 
 	/*
 	 *
