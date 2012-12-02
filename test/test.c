@@ -67,6 +67,7 @@ static void test_write_read()
 		printf("System call worked\n");
 		printf("Retrieved GPS Information:\n");
 		print_gps(loc);
+		printf("Age of GPS info is %d\n", ret);
 		printf("\n");
 	}
 }
