@@ -167,7 +167,7 @@ static int valid_filepath(const char *file)
 static int get_file_gps_location(const char *file, struct gps_location *loc)
 {
 	char *kfile;
-	int flags;
+	int ret;
 	struct inode *d_inode;
 	struct path kpath = { .mnt = NULL, .dentry = NULL} ;
 	int string_size = strlen(file) + 1;
@@ -231,6 +231,7 @@ static int get_file_gps_location(const char *file, struct gps_location *loc)
 
 	/* Make the System GPS Read Call.*/
 	return vfs_get_gps(d_inode, loc);
+
 	//struct file_system_type *fst; d_inode->i_ino;
 
 

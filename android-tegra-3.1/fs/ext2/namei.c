@@ -195,7 +195,8 @@ static int ext2_get_gps (struct inode *inode, struct gps_location *loc)
 	if (loc == NULL || inode == NULL)
 		return -EINVAL;
 
-
+	/* TODO: Important.
+	 * Return the -ENODEV error if the GPS info DOES not exist */
 
 	/*
 	 * Load the In Memory struct of the ext_inode
