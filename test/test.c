@@ -37,7 +37,6 @@ static void test()
 {
 	int ret;
 	struct gps_location loc;
-	char test_gps_file[PATH_MAX] = TEST_GPS_FILE;
 	FILE *fp = NULL;
 
 	printf("Test GPS Program\n");
@@ -60,10 +59,7 @@ static void test()
 
 	/* Retrieve File GPS Info From Kernel */
 	printf("About to Make System Call to Kernel to retrieve GPS info\n");
-	//ret = syscall(GET_GPS, "/data/misc/hmwk6/gps_test.txt", &loc);
-	ret = syscall(GET_GPS, test_gps_file, &loc);
-	printf("done\n");
-	return;
+	ret = syscall(GET_GPS, TEST_GPS_FILE, &loc);
 	if (ret < 0 ) {
 		perror("System call failed:");
 		return;
@@ -71,6 +67,7 @@ static void test()
 		printf("System call worked\n");
 		printf("Retrieved GPS Information:\n");
 		print_gps(loc);
+		printf("\n");
 	}
 }
 
