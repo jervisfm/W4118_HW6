@@ -194,6 +194,32 @@ static int ext2_get_gps (struct inode *inode, struct gps_location *loc)
 		return -EINVAL;
 
 
+	/*
+	 * TODO: Think about the issue/problem of syncing here.
+	 * Should we pull the GPS information from RAM or go to
+	 * disk ? For this first implementation, I'm just gonna
+	 * go to RAM directly.
+	 */
+	struct ext2_inode_info *ei = EXT2_I(inode);
+
+	/* From my study of the code, all of the *inode structures
+	 * should be embedded with the ext2_inode_info structure.
+	 * Let's just do a sanity double check to make verify this. */
+
+	BUG_ON(&ei->vfs_inode != inode);
+
+
+	/* How to get Inode from DISK.
+	struct super_block *sb = inode->i_sb;
+	ino_t ino = inode->i_ino;
+	uid_t uid = inode->i_uid;
+	gid_t gid = inode->i_gid;
+	struct buffer_head *bh;
+	struct ext2_inode *raw_inode = ext2_get_inode(sb, ino, &bh);
+	*/
+
+	ei->
+
 
 
 	return 0;
