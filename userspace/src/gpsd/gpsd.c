@@ -248,7 +248,8 @@ int main2(int argc, char **argv)
 		ret = syscall(SET_GPS, &location);
 
 		if (ret < 0)
-			fprintf(log, "Failed to update kernel with new GPS\n");
+			fprintf(log, "Failed to update kernel"
+				     " with new GPS (Error %d)\n", ret);
 		else
 			fprintf(log, "Successfully updated kernel with GPS \n");
 

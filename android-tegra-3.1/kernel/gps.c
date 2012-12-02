@@ -88,7 +88,7 @@ static void print_gps(void)
 			lat, lng, acc);
 }
 
-/* Returns 1 on success, and -ve on error.
+/* Returns 0 on success, and -ve on error.
  */
 static int valid_gps(struct gps_location *loc)
 {
@@ -98,7 +98,7 @@ static int valid_gps(struct gps_location *loc)
 	if (loc->latitude == 0 && loc->longitude == 0)
 		return -EINVAL;
 
-	return 1;
+	return 0;
 }
 
 SYSCALL_DEFINE1(set_gps_location, struct gps_location __user *, loc)
@@ -107,7 +107,7 @@ SYSCALL_DEFINE1(set_gps_location, struct gps_location __user *, loc)
 
 	struct gps_location *k_gps = &kernel_gps.loc;
 
-	if (valid_gps(loc))
+	if (!valid_gps(loc))
 		return -EINVAL;
 
 	if (copy_from_user(k_gps,
