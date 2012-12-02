@@ -167,7 +167,6 @@ static int valid_filepath(const char *file)
  */
 static int get_file_gps_location(const char *kfile, struct gps_location *loc)
 {
-	int ret;
 	struct inode *d_inode;
 	struct path kpath = { .mnt = NULL, .dentry = NULL} ;
 
