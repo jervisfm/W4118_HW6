@@ -209,7 +209,6 @@ static int ext2_get_gps (struct inode *inode, struct gps_location *loc)
 
 	BUG_ON(&ei->vfs_inode != inode);
 
-
 	/* How to get Inode from DISK.
 	struct super_block *sb = inode->i_sb;
 	ino_t ino = inode->i_ino;
