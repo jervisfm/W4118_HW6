@@ -107,8 +107,8 @@ static void do_nothing()
 int main(int argc, char **argv)
 {
 	do_nothing();
-	//test_write_read();
-	test_read();
+	test_write_read();
+	//test_read();
 	return 0;
 
 
