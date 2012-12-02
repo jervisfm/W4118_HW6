@@ -1293,6 +1293,8 @@ void ext2_get_inode_flags(struct ext2_inode_info *ei)
  * TODO: Review this function.
  * This seems to be the "read_inode" function that actually reads
  * the ON-DISK inode into Memory.
+ * After some analysis, this function just returns a pointer to
+ * the in memory inode by the given number.
  */
 struct inode *ext2_iget (struct super_block *sb, unsigned long ino)
 {

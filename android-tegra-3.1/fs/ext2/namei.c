@@ -189,25 +189,30 @@ static int ext2_set_gps (struct inode *inode)
 static int ext2_get_gps (struct inode *inode, struct gps_location *loc)
 {
 	/* TODO: still to be implemented */
-
-	int age = 0;
+	struct inode *ext_inode = NULL;
+	unsigned int age = 0;
 	if (loc == NULL || inode == NULL)
 		return -EINVAL;
 
 
+
 	/*
-	 * TODO: Think about the issue/problem of syncing here.
-	 * Should we pull the GPS information from RAM or go to
-	 * disk ? For this first implementation, I'm just gonna
-	 * go to RAM directly.
+	 * Load the In Memory struct of the ext_inode
+	 * with the given number by using the ext2_iget function.
+	 *
+	 * TODO: Is syncing an issue ? I am reading from RAM directly
+	 * and I think that should be OK.
 	 */
-	struct ext2_inode_info *ei = EXT2_I(inode);
+	ext_inode = ext2_iget(inode->i_sb, inode->i_no);
+	struct ext2_inode_info *ei = EXT2_I(ext_inode);
+
 
 	/* From my study of the code, all of the *inode structures
 	 * should be embedded with the ext2_inode_info structure.
-	 * Let's just do a sanity double check to make verify this. */
+	 * Let's just do a test sanity check to make verify this.
+	 * (I'm actually not using this assumption btw) */
+	WARN_ON(&ei->vfs_inode != inode);
 
-	BUG_ON(&ei->vfs_inode != inode);
 
 	/* How to get Inode from DISK.
 	struct super_block *sb = inode->i_sb;
@@ -225,7 +230,7 @@ static int ext2_get_gps (struct inode *inode, struct gps_location *loc)
 	loc->latitude = *((double *)(&ei->i_gps.latitude));
 	loc->longitude = *((double *)(&ei->i_gps.longitude));
 	loc->accuracy = *((float*)(&ei->i_gps.accuracy));
-	age = *((int *)(&ei->i_gps.age));
+	age = *((unsigned int *)(&ei->i_gps.age));
 	return age;
 }
 

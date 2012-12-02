@@ -196,16 +196,16 @@ static void get_file_gps_location(const char *file, struct gps_location *loc)
 	d_inode = kpath.dentry->d_inode;
 
 	if (d_inode == NULL) {
-		printk("File Lookup Failed. Non-existent path: %s", kfile);
+		printk("File Lookup Failed. Non-existent path: %s\n", kfile);
 		kfree(kfile);
 		return -EINVAL;
 	}
 
 
-	/* Verify that the file path given in on a FS with GPS support */
+	/* Verify that the file path given is on a FS with GPS support */
 	if (strcmp(d_inode->i_sb->s_type->name, EXT_FS_GPS) != 0) {
 		printk("GPS Lookup Failed: File (%s) "
-				"not on FS with GPS support", kfile);
+				"not on EXT FS with GPS support\n", kfile);
 		kfree(kfile);
 		return -EINVAL;
 	}
