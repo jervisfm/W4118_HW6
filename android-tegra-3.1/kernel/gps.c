@@ -146,6 +146,40 @@ static int valid_filepath(const char *file)
 static void get_file_gps_location(const char *file, struct gps_location *loc)
 {
 	/* Still to be implemented */
+	if (file == NULL || loc == NULL)
+		return;
+
+	/* TODO: enable these checks when their functions
+	 * are implemented.
+	if (!valid_filepath(file))
+		return;
+
+	if (!can_access_file(file))
+		return;
+	*/
+	int string_size = strlen(file) + 1;
+	char *kfile = kcalloc(string_size, sizeof(char), GFP_KERNEL);
+	if (kfile == NULL)
+		return -ENOMEM;
+
+	if (copy_from_user(kfile, file, string_size) != 0)
+		return -EFAULT;
+
+	/*
+	 *
+	 */
+
+	/*
+	 * After looking at namei.c file in /fs, I determined
+	 * path_lookup is the function we want to use.
+	 * This function is inturn called from do_path_lookup,
+	 * with tries different variations, which is inturn called by
+	 * kern_path(). So, we should use kern_path().
+	 *
+	 */
+
+
+
 }
 
 /* Public Kernel Function.
