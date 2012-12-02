@@ -194,6 +194,8 @@ static int ext2_get_gps (struct inode *inode, struct gps_location *loc)
 		return -EINVAL;
 
 
+
+
 	return 0;
 }
 
