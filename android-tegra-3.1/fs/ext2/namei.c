@@ -190,6 +190,7 @@ static int ext2_get_gps (struct inode *inode, struct gps_location *loc)
 {
 	/* TODO: still to be implemented */
 	struct inode *ext_inode = NULL;
+	struct ext2_inode_info *ei = NULL;
 	unsigned int age = 0;
 	if (loc == NULL || inode == NULL)
 		return -EINVAL;
@@ -203,8 +204,8 @@ static int ext2_get_gps (struct inode *inode, struct gps_location *loc)
 	 * TODO: Is syncing an issue ? I am reading from RAM directly
 	 * and I think that should be OK.
 	 */
-	ext_inode = ext2_iget(inode->i_sb, inode->i_no);
-	struct ext2_inode_info *ei = EXT2_I(ext_inode);
+	ext_inode = ext2_iget(inode->i_sb, inode->i_ino);
+	ei = EXT2_I(ext_inode);
 
 
 	/* From my study of the code, all of the *inode structures

@@ -144,8 +144,9 @@ static int valid_filepath(const char *file)
 /*
  * Retrieves the gps saved on the given file path and saves
  * this data in @loc parameter.
+ * It returns the age of the data as an int.
  */
-static void get_file_gps_location(const char *file, struct gps_location *loc)
+static int get_file_gps_location(const char *file, struct gps_location *loc)
 {
 	char *kfile;
 	int flags;
@@ -155,7 +156,7 @@ static void get_file_gps_location(const char *file, struct gps_location *loc)
 
 	/* Still to be implemented */
 	if (file == NULL || loc == NULL)
-		return;
+		return -EINVAL;
 
 	/* TODO: enable these checks when their functions
 	 * are implemented.
@@ -210,7 +211,7 @@ static void get_file_gps_location(const char *file, struct gps_location *loc)
 		return -EINVAL;
 	}
 
-	/* Load up EXT2 specific node */
+	/* Make the EXT2 GPS Call.*/
 
 	//struct file_system_type *fst; d_inode->i_ino;
 
