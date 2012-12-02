@@ -39,7 +39,7 @@
 /*
  * Main TODO:
  * -> Okay, Next course of action is to actually test out the code
- * that we've written so far AKA step 3.
+ * that we've written so far, i.e. step 3.
  */
 
 #include <linux/kernel.h>
