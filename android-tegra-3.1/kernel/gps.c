@@ -83,9 +83,21 @@ static void print_gps(void)
 	lng = *((unsigned long int*) &kernel_gps.loc.longitude);
 	acc = *((unsigned int*) &kernel_gps.loc.accuracy);
 
-	/* currently disbaled */
-	printk("Latitude: %lx\n Longitude: %lx\n Accuracy: %x",
+	printk("Latitude: %#llx\n Longitude: %#llx\n Accuracy: %#x",
 			lat, lng, acc);
+
+	/* other Debugging / test code. DELETE LATER.
+	__le64 lat1, lng1;
+	__le32 acc1;
+	lat1 = cpu_to_le64(100);
+	lng1 = cpu_to_le64(1000);
+	acc1 = cpu_to_le32(100);
+	printk("Latitude: %#llx\n Longitude: %#llx\n Accuracy: %#x",
+			cpu_to_le64(100), cpu_to_le64(1000), cpu_to_le32(100));
+	printk("\n");
+	printk("Lat : %#llx | Lng: %#llx | Accuracy: %x\n===== ==== \n",
+		le64_to_cpu(lat1), le64_to_cpu(lng1), le32_to_cpu(acc1));
+	*/
 }
 
 /* Returns 0 on success, and -ve on error.
