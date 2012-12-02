@@ -77,14 +77,15 @@ static void print_gps(void)
 {
 	/* Kernel lacks support for floating points.
 	 * Will print in HEX instead */
-	unsigned long int *lat, *lng, *acc;
-	lat = (unsigned long int*) &kernel_gps.loc.latitude;
-	lng = (unsigned long int*) &kernel_gps.loc.longitude;
-	acc = (unsigned long int*) &kernel_gps.loc.accuracy;
+	unsigned long long int lat, lng;
+	unsigned int acc;
+	lat = *((unsigned long int*) &kernel_gps.loc.latitude);
+	lng = *((unsigned long int*) &kernel_gps.loc.longitude);
+	acc = *((unsigned int*) &kernel_gps.loc.accuracy);
 
 	/* currently disbaled */
-	pr_debug("Latitude: %x\n Longitude: %x\n Accuracy: %x",
-			*lat, *lng, *acc);
+	printk("Latitude: %lx\n Longitude: %lx\n Accuracy: %x",
+			lat, lng, acc);
 }
 
 /* Returns 1 on success, and -ve on error.
