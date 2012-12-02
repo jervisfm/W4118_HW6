@@ -95,9 +95,14 @@ static int valid_gps(struct gps_location *loc)
 	if (loc == NULL)
 		return -EINVAL;
 
+	/* TODO: Important.
+	 * This is disabled because it causes a compiler error.
+	 * From Piazza, it was mentioned that we should return an error
+	 * if the GPS coordinates are not all zeros.
 	if (loc->latitude == 0 && loc->longitude == 0)
 		return -EINVAL;
 
+	*/
 	return 0;
 }
 
@@ -107,7 +112,7 @@ SYSCALL_DEFINE1(set_gps_location, struct gps_location __user *, loc)
 
 	struct gps_location *k_gps = &kernel_gps.loc;
 
-	if (!valid_gps(loc))
+	if (valid_gps(loc) != 0)
 		return -EINVAL;
 
 	if (copy_from_user(k_gps,
