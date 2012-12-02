@@ -58,10 +58,10 @@ static void test()
 
 	/* Retrieve File GPS Info From Kernel */
 	printf("About to Make System Call to Kernel to retrieve GPS info\n");
-	ret = syscall(GET_GPS, TEST_GPS_FILE, loc);
+	ret = syscall(GET_GPS, TEST_GPS_FILE, &loc);
 
 	if (ret < 0 ) {
-		perror("System call failed\n");
+		perror("System call failed:");
 		return;
 	} else {
 		printf("System call worked\n");
