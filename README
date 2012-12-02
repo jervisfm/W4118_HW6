@@ -8,3 +8,6 @@ Linux Kernel Development, 3rd Edition: Chapter 13, Virtual File System.
 
 Personal Operating System Class Notes 
 
+Printf specifiers syntax: 
+http://en.cppreference.com/w/c/io/fprintf
+http://www.cplusplus.com/reference/cstdio/printf/
