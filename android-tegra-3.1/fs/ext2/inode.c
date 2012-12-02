@@ -1491,13 +1491,16 @@ static int __ext2_write_inode(struct inode *inode, int do_sync)
 	 * after we are done testing this code.
 	 *
 	 * IMPORTANT: also check if we need to use cpu_to_le32/64 macro again.
-	 * we already do it when set / update the gps_information
+	 * we already do it when set / update the gps_information.
+	 * I go for doing it again, b'se inode could have been dirtied by
+	 * something else. Also, to avoid double conversions, I set no longer
+	 * apply the macro in set_gps information.
 	 */
 	/*
-	raw_inode->i_latitude = (ei->i_gps.latitude);
-	raw_inode->i_longitude =(ei->i_gps.longitude);
-	raw_inode->i_accuracy = (ei->i_gps.accuracy);
-	raw_inode->i_coord_age =(ei->i_gps.age);
+	raw_inode->i_latitude = cpu_to_le64(ei->i_gps.latitude);
+	raw_inode->i_longitude = cpu_to_le64(ei->i_gps.longitude);
+	raw_inode->i_accuracy = cpu_to_le32(ei->i_gps.accuracy);
+	raw_inode->i_coord_age = cpu_to_le32(ei->i_gps.age);
 	*/
 
 

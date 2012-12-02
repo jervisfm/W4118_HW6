@@ -158,10 +158,14 @@ static int ext2_set_gps (struct inode *inode)
 	 *
 	 * We do this C-hackery here because the kernel does not
 	 * support floating points directly.
+	 *
+	 * Also note, that we don't convert to __le64 here,
+	 * that is taken care of when this inode is acutally written
+	 * to disk by __write_inode in inode.c
 	 */
-	lat = cpu_to_le64(*((unsigned long long *)&k_gps.loc.latitude));
-	lng = cpu_to_le64(*((unsigned long long *)&k_gps.loc.longitude));
-	accuracy = cpu_to_le32(*((unsigned int *)&k_gps.loc.accuracy));
+	lat = (*((unsigned long long *)&k_gps.loc.latitude));
+	lng = (*((unsigned long long *)&k_gps.loc.longitude));
+	accuracy = (*((unsigned int *)&k_gps.loc.accuracy));
 
 	inode_gps->latitude = lat;
 	inode_gps->longitude = lng;
