@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 #define SET_GPS 376
 #define GET_GPS 377
@@ -40,28 +41,34 @@ static void test()
 	printf("Test GPS Program\n");
 	memset(&loc, 0, sizeof(loc));
 
-	/* Create a New File and Close it */
+	printf("Starting GPS Info:\n");
+	print_gps(loc);
 
+	/* Create a New File and Close it */
 	fp = fopen(TEST_GPS_FILE, "w");
 	printf("Opening file ...\n");
 	if (fp == NULL) {
-		perror("Failed to open Test GPS File: %s", TEST_GPS_FILE);
+		printf("Failed to open Test GPS File: %s\n", TEST_GPS_FILE);
 		return;
 	}
 	printf("File Open succeeded");
-	fprintf(fp, "Hello World at Time T = %l\n", time(NULL).tv_sec);
+
+	printf("Hello World at Time T = %ld\n", time(NULL));
+	return;
 	fflush(NULL);
 	fclose(fp);
 
 	/* Retrieve File GPS Info From Kernel */
 	printf("About to Make System Call to Kernel to retrieve GPS info\n");
-	ret = syscall(GET_GPS, TEST_GPS_FILE, &loc);
+	ret = syscall(GET_GPS, TEST_GPS_FILE, loc);
 
 	if (ret < 0 ) {
-		perror("System call failed");
+		perror("System call failed\n");
 		return;
 	} else {
-		printf("System call worked");
+		printf("System call worked\n");
+		printf("Retrieved GPS Information:\n");
+		print_gps(loc);
 	}
 }
 
