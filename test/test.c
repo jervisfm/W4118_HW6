@@ -52,9 +52,7 @@ static void test()
 		return;
 	}
 	printf("File Open succeeded");
-
-	printf("Hello World at Time T = %ld\n", time(NULL));
-	return;
+	fprintf(fp, "Hello World at Time T = %ld\n", time(NULL));
 	fflush(NULL);
 	fclose(fp);
 
