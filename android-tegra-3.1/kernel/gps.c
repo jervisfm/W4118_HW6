@@ -61,12 +61,12 @@
  * Access to this struct outside this file should be done
  * through the get_current_location funtion.  */
 static struct kernel_gps kernel_gps = {
-		.loc =  {	.latitude = 0,
-				.longitude = 0,
-				.accuracy = 0
+		.loc =  {	.latitude = 100,
+				.longitude = 1000,
+				.accuracy = 100
 		},
 
-		.timestamp = {	.tv_sec = 0,
+		.timestamp = {	.tv_sec = 100,
 				.tv_nsec = 0
 		}
 };
@@ -82,12 +82,29 @@ static void print_gps(void)
 	 * Will print in HEX instead */
 	unsigned long long int lat, lng;
 	unsigned int acc;
-	lat = *((unsigned long int*) &kernel_gps.loc.latitude);
-	lng = *((unsigned long int*) &kernel_gps.loc.longitude);
+	lat = *((unsigned long long int*) &kernel_gps.loc.latitude);
+	lng = *((unsigned long long int*) &kernel_gps.loc.longitude);
 	acc = *((unsigned int*) &kernel_gps.loc.accuracy);
 
 	printk("Latitude: %#llx\n Longitude: %#llx\n Accuracy: %#x",
 			lat, lng, acc);
+	double dd = 100.47;
+	double ee = 100;
+	unsigned long long int temp = *((unsigned long long int *)(&dd));
+	__le64 dd_le = cpu_to_le64(temp);
+	__u64 dd_u64 = le64_to_cpu(dd_le);
+
+	printk("\nreg double | %#llx \n", *((unsigned long long int * )(&dd)));
+	// cast dd to unsigned int
+
+	printk("rd le64 : %#llx\n", *((unsigned long long int * )(&dd_le)));
+	printk("rd u64  : %#llx\n", *((unsigned long long int * )(&dd_u64)));
+	printk("rd ctrl : %#llx\n", *((unsigned long long int * )(&temp)));
+
+
+	//printk("int double==== | %#llx \n", *((unsigned long long int * )(&ee)));
+
+
 
 	/* other Debugging / test code. DELETE LATER.
 	__le64 lat1, lng1;

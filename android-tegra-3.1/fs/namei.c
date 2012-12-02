@@ -3418,13 +3418,15 @@ int vfs_set_gps (struct inode *inode)
 	if (inode->i_op->set_gps_location != NULL)
 		ret = inode->i_op->set_gps_location(inode);
 	else
-		ret = -ENOENT; /* No such GPS-capable file*/
+		ret = -ENOENT; /* No such GPS-capable file */
 
 	return ret;
 }
-
+/**
+ * TODO: Are these Exports needed ? It seemed to work OK w/o them. i think.
+ */
 EXPORT_SYMBOL(vfs_set_gps);
-EXPORT_SYMBOL(vgs_get_gps);
+EXPORT_SYMBOL(vfs_get_gps);
 EXPORT_SYMBOL(user_path_at);
 EXPORT_SYMBOL(follow_down_one);
 EXPORT_SYMBOL(follow_down);

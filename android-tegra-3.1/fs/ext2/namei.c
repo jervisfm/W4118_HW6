@@ -97,12 +97,18 @@ struct dentry *ext2_get_parent(struct dentry *child)
 static int ext2_create (struct inode * dir, struct dentry * dentry, int mode, struct nameidata *nd)
 {
 	struct inode *inode;
+	int ret;
 
 	dquot_initialize(dir);
 
 	inode = ext2_new_inode(dir, mode, &dentry->d_name);
 	if (IS_ERR(inode))
 		return PTR_ERR(inode);
+
+	/* Set GPS information and if not successfuly */
+	ret = ext2_set_gps(inode);
+	WARN_ON(ret != 0);
+
 
 	inode->i_op = &ext2_file_inode_operations;
 	if (ext2_use_xip(inode->i_sb)) {
@@ -182,7 +188,8 @@ int ext2_set_gps (struct inode *inode)
 	age_in_seconds = (unsigned int) age.tv_sec;
 	inode_gps->age = cpu_to_le32(age_in_seconds);
 	/* Mark Inode dirty */
-	inode->i_sb->s_op->dirty_inode(inode, I_DIRTY_SYNC);
+	mark_inode_dirty_sync(inode, I_DIRTY);
+	/* inode->i_sb->s_op->dirty_inode(inode, I_DIRTY_SYNC); */
 	return 0;
 }
 

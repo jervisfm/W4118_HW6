@@ -570,6 +570,11 @@ got:
 	ei->i_block_group = group;
 	ei->i_dir_start_lookup = 0;
 	ei->i_state = EXT2_STATE_NEW;
+	/*
+	 * TODO: Load GPS Information for this new INODE here ?
+	 * I do it in the parent function that call us already. .
+	 */
+
 	ext2_set_inode_flags(inode);
 	spin_lock(&sbi->s_next_gen_lock);
 	inode->i_generation = sbi->s_next_generation++;

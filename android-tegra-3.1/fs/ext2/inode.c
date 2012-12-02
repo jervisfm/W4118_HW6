@@ -1485,12 +1485,34 @@ static int __ext2_write_inode(struct inode *inode, int do_sync)
 	 * commented out code below.
 	 */
 
-	double ll = 100.29;
+	//double ll = 100.47;
+	//unsigned long long int temp = *((unsigned long long int*)&ll);
+	raw_inode->i_latitude = cpu_to_le64(ei->i_gps.latitude);
+	raw_inode->i_longitude = cpu_to_le64(ei->i_gps.longitude);
+	raw_inode->i_accuracy = cpu_to_le32(ei->i_gps.accuracy);
+	raw_inode->i_coord_age = cpu_to_le32(ei->i_gps.age);
 
-	raw_inode->i_latitude = cpu_to_le64(*((unsigned long long int*)(&ll)));
-	raw_inode->i_longitude = cpu_to_le64(ll);
-	raw_inode->i_accuracy = cpu_to_le32(100.37);
-	raw_inode->i_coord_age = cpu_to_le32(100.37);
+	printk("\nAbout to write lat=%#llx\nlng=%#llx\nacc=%#x\nto disk...\n",
+			ei->i_gps.latitude,
+			ei->i_gps.longitude,
+			ei->i_gps.accuracy);
+
+	// testing hack : update in memory reprsentation
+//	ei->i_gps.age = raw_inode->i_coord_age;
+//	ei->i_gps.accuracy = raw_inode->i_accuracy ;
+//	ei->i_gps.latitude =raw_inode->i_latitude;
+//	ei->i_gps.longitude = raw_inode->i_longitude ;
+
+//	raw_inode->i_latitude = cpu_to_le64(temp);
+//	raw_inode->i_longitude = cpu_to_le64(temp);
+//	raw_inode->i_accuracy = cpu_to_le32(100);
+//	raw_inode->i_coord_age = cpu_to_le32(100);
+
+//	to delete
+//	raw_inode->i_latitude = cpu_to_le64(*((unsigned long long int*)(&ll)));
+//	raw_inode->i_longitude = cpu_to_le64(ll);
+//	raw_inode->i_accuracy = cpu_to_le32(100.37);
+//	raw_inode->i_coord_age = cpu_to_le32(100.37);
 
 	if (printk_ratelimit())
 		printk("Writing Inode: %ld\n", inode->i_ino);

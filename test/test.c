@@ -28,7 +28,7 @@ static void print_gps(struct gps_location gps_location)
 	lng = *((unsigned long long int*) &gps_location.longitude);
 	acc = *((unsigned int*) &gps_location.accuracy);
 
-	printf("Latitude: %#llx\n Longitude: %#llx\n Accuracy: %#x",
+	printf("Latitude: %#llx\n Longitude: %#llx\n Accuracy: %#x\n",
 			lat, lng, acc);
 }
 
