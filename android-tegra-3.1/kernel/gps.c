@@ -47,6 +47,8 @@
 #include <linux/gps.h>
 #include <linux/uaccess.h>
 #include <linux/slab.h>
+/* For LOOKUP_FOLLOW, LOOKUP DIRECTORY flags */
+#include <linux/namei.h>
 /* Import the maximum length of an absolute path including the null char
  * [PATH_MAX] */
 #include <linux/limits.h>
@@ -145,6 +147,12 @@ static int valid_filepath(const char *file)
  */
 static void get_file_gps_location(const char *file, struct gps_location *loc)
 {
+	char *kfile;
+	int flags;
+	struct inode *d_inode;
+	struct path kpath = { .mnt = NULL, .dentry = NULL} ;
+	int string_size = strlen(file) + 1;
+
 	/* Still to be implemented */
 	if (file == NULL || loc == NULL)
 		return;
@@ -157,27 +165,45 @@ static void get_file_gps_location(const char *file, struct gps_location *loc)
 	if (!can_access_file(file))
 		return;
 	*/
-	int string_size = strlen(file) + 1;
-	char *kfile = kcalloc(string_size, sizeof(char), GFP_KERNEL);
+
+	kfile = kcalloc(string_size, sizeof(char), GFP_KERNEL);
 	if (kfile == NULL)
 		return -ENOMEM;
 
-	if (copy_from_user(kfile, file, string_size) != 0)
+	if (copy_from_user(kfile, file, string_size) != 0) {
+		kfree(kfile);
 		return -EFAULT;
-
-	/*
-	 *
-	 */
-
+	}
 	/*
 	 * After looking at namei.c file in /fs, I determined
 	 * path_lookup is the function we want to use.
 	 * This function is inturn called from do_path_lookup,
 	 * with tries different variations, which is inturn called by
-	 * kern_path(). So, we should use kern_path().
+	 * kern_path(). So, we should use kern_path(). It returns 0 on
+	 * success and something else on failure
 	 *
 	 */
 
+	/* TODO: check if we need the LOOKUP_AUTOMOUNT flag as well ?
+	 * I don't think so, but just check to be sure. */
+	if (kern_path(kfile, LOOKUP_DIRECTORY | LOOKUP_FOLLOW, &kpath) != 0) {
+		printk("File Lookup Failed: %s\n", kfile);
+		kfree(kfile);
+		return -EAGAIN;
+	}
+
+	/* d_inode represents the inode of the looked up path */
+	d_inode = kpath.dentry->d_inode;
+
+	if (d_inode == NULL) {
+		prinkt("File Lookup Failed. Non-existent path: %s", kfile);
+		kfree(kfile);
+		return -EINVAL;
+	}
+
+	/* Continue from here : need to check if INODE is EXT2,
+	 * load up the ext2 specific inode, and lookup gps */
+	d_inode->i_ino;
 
 
 }
