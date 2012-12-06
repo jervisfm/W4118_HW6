@@ -250,7 +250,7 @@ int main(int argc, char **argv)
 
 		/* TODO: Remove me. Make System call to be
 		 * from random locations.*/
-		/* location = get_random_loc(i++); */
+		location = get_random_loc(i++);
 		ret = syscall(SET_GPS, &location);
 
 		if (ret < 0)
