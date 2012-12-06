@@ -19,6 +19,13 @@
  * EXPORT_SYMBOL() is useful macro to make certain non-static function
  * visilbe inside the kernel.
  *
+ * I was wondering why / how our code was working when creating files,
+ * read through the code and found that ext2_create is called from
+ * vfs_create(). The sys_open() system call is used to both open and
+ * create new empty file. It just called the do_sys_open(). In this function
+ * the most interesting call is to do_last(), which lookups the last segment
+ * of a file path. It's in do_last() where have a call to vfs_create().
+ *
  * Plan of actions
  * We have two choices:
  *

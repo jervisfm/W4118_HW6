@@ -765,12 +765,19 @@ EXPORT_SYMBOL(vfs_readv);
 ssize_t vfs_writev(struct file *file, const struct iovec __user *vec,
 		   unsigned long vlen, loff_t *pos)
 {
+	int ret = 0;
+	struct inode *inode;
 	if (!(file->f_mode & FMODE_WRITE))
 		return -EBADF;
 	if (!file->f_op || (!file->f_op->aio_write && !file->f_op->write))
 		return -EINVAL;
 
-	return do_readv_writev(WRITE, file, vec, vlen, pos);
+	ret = do_readv_writev(WRITE, file, vec, vlen, pos);
+	inode = file->f_mapping->host;
+	/*TODO: Review me. is okay that we go through here ?*/
+	if (ret > 0)
+		vfs_set_gps(inode);
+	return ret;
 }
 
 EXPORT_SYMBOL(vfs_writev);
