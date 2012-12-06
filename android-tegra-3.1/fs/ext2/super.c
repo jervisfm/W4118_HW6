@@ -187,6 +187,7 @@ static void init_once(void *foo)
 	struct ext2_inode_info *ei = (struct ext2_inode_info *) foo;
 
 	rwlock_init(&ei->i_meta_lock);
+	rwlock_init(&ei->i_gps_lock);
 #ifdef CONFIG_EXT2_FS_XATTR
 	init_rwsem(&ei->xattr_sem);
 #endif

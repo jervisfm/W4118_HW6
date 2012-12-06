@@ -65,6 +65,8 @@ struct ext2_inode_info {
 	 * code if there any that relies on the fixed size of the
 	 * general Linux inode structure. */
 	struct gps_on_disk i_gps;
+	/* Per GPS lock */
+	rwlock_t i_gps_lock;
 };
 
 /*
