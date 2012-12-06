@@ -124,7 +124,7 @@ static void test_mod()
 
 
 	/* Open existing File and write to it */
-	fp = fopen(TEST_GPS_FILE, "r");
+	fp = fopen(TEST_GPS_FILE, "r+");
 	printf("Opening file ...\n");
 	if (fp == NULL) {
 		printf("Failed to open Test GPS File: %s\n", TEST_GPS_FILE);
