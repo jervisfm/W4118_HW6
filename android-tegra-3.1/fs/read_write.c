@@ -424,12 +424,6 @@ ssize_t vfs_write(struct file *file, const char __user *buf, size_t count, loff_
 			inode = file->f_mapping->host;
 			fsnotify_modify(file);
 			add_wchar(current, ret);
-			vfs_set_gps(inode);
-			/* TODO: Remove me. Debugging code */
-			if (strcmp(file->f_path.dentry->d_iname,
-				   "gps_test.txt") == 0)
-				printk("\nvfs_write %s\n",
-					file->f_path.dentry->d_iname);
 		}
 		inc_syscw(current);
 	}
@@ -774,9 +768,6 @@ ssize_t vfs_writev(struct file *file, const struct iovec __user *vec,
 
 	ret = do_readv_writev(WRITE, file, vec, vlen, pos);
 	inode = file->f_mapping->host;
-	/*TODO: Review me. is okay that we go through here ?*/
-	if (ret > 0)
-		vfs_set_gps(inode);
 	return ret;
 }
 

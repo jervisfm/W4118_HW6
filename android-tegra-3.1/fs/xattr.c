@@ -135,9 +135,7 @@ vfs_setxattr(struct dentry *dentry, const char *name, const void *value,
 
 out:
 	mutex_unlock(&inode->i_mutex);
-	/* Update gps information */
-	if (!error)
-		vfs_set_gps(inode);
+
 	return error;
 }
 EXPORT_SYMBOL_GPL(vfs_setxattr);
@@ -246,10 +244,9 @@ vfs_removexattr(struct dentry *dentry, const char *name)
 	error = inode->i_op->removexattr(dentry, name);
 	mutex_unlock(&inode->i_mutex);
 
-	if (!error) {
+	if (!error)
 		fsnotify_xattr(dentry);
-		vfs_set_gps(inode);
-	}
+
 	return error;
 }
 EXPORT_SYMBOL_GPL(vfs_removexattr);
