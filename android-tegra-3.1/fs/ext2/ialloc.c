@@ -571,9 +571,10 @@ got:
 	ei->i_dir_start_lookup = 0;
 	ei->i_state = EXT2_STATE_NEW;
 	/*
-	 * TODO: Load GPS Information for this new INODE here ?
-	 * I do it in the parent function that call us already. .
+	 * TODO: We Load GPS Information for this new INODE here
+	 * as it represents a new meta-data entry.
 	 */
+	ext2_set_gps(inode);
 
 	ext2_set_inode_flags(inode);
 	spin_lock(&sbi->s_next_gen_lock);

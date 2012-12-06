@@ -2470,8 +2470,11 @@ int vfs_mknod(struct inode *dir, struct dentry *dentry, int mode, dev_t dev)
 		return error;
 
 	error = dir->i_op->mknod(dir, dentry, mode, dev);
-	if (!error)
+	if (!error) {
 		fsnotify_create(dir, dentry);
+		/* Update directory gps information */
+		vfs_set_gps(dir);
+	}
 	return error;
 }
 
@@ -2560,8 +2563,14 @@ int vfs_mkdir(struct inode *dir, struct dentry *dentry, int mode)
 		return error;
 
 	error = dir->i_op->mkdir(dir, dentry, mode);
-	if (!error)
+	if (!error) {
 		fsnotify_mkdir(dir, dentry);
+		/* Update the 'old' directory gps information only.
+		 * ie the one in which the new directory is being created
+		 * in. The new dir will auto get gps info from ext2_create
+		 */
+		vfs_set_gps(dir);
+	}
 	return error;
 }
 
@@ -2654,8 +2663,10 @@ int vfs_rmdir(struct inode *dir, struct dentry *dentry)
 out:
 	mutex_unlock(&dentry->d_inode->i_mutex);
 	dput(dentry);
-	if (!error)
+	if (!error) {
 		d_delete(dentry);
+		vfs_set_gps(dir);
+	}
 	return error;
 }
 
@@ -2744,6 +2755,8 @@ int vfs_unlink(struct inode *dir, struct dentry *dentry)
 	if (!error && !(dentry->d_flags & DCACHE_NFSFS_RENAMED)) {
 		fsnotify_link_count(dentry->d_inode);
 		d_delete(dentry);
+		/* Update gps for directory */
+		vfs_set_gps(dir);
 	}
 
 	return error;
@@ -2841,8 +2854,11 @@ int vfs_symlink(struct inode *dir, struct dentry *dentry, const char *oldname)
 		return error;
 
 	error = dir->i_op->symlink(dir, dentry, oldname);
-	if (!error)
+	if (!error) {
 		fsnotify_create(dir, dentry);
+		/* Update gps information for directory */
+		vfs_set_gps(dir);
+	}
 	return error;
 }
 
@@ -2924,8 +2940,11 @@ int vfs_link(struct dentry *old_dentry, struct inode *dir, struct dentry *new_de
 	mutex_unlock(&inode->i_mutex);
 	if (!error) {
 		fsnotify_link(dir, inode, new_dentry);
-		/* Update gps information */
+		/* TODO: Important, review this code */
+		/* Update gps information for both
+		 * directory and file */
 		vfs_set_gps(inode);
+		vfs_set_gps(dir);
 	}
 	return error;
 }
@@ -3137,9 +3156,14 @@ int vfs_rename(struct inode *old_dir, struct dentry *old_dentry,
 		error = vfs_rename_dir(old_dir,old_dentry,new_dir,new_dentry);
 	else
 		error = vfs_rename_other(old_dir,old_dentry,new_dir,new_dentry);
-	if (!error)
+	if (!error) {
 		fsnotify_move(old_dir, new_dir, old_name, is_dir,
 			      new_dentry->d_inode, old_dentry);
+		/* TODO: do you want to include dirs here ? I don't
+		 * think so */
+		/* Set gps info for moved file */
+		vfs_set_gps(new_dentry->d_inode);
+	}
 	fsnotify_oldname_free(old_name);
 
 	return error;

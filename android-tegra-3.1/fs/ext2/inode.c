@@ -1627,6 +1627,9 @@ int ext2_setattr(struct dentry *dentry, struct iattr *iattr)
 	setattr_copy(inode, iattr);
 	if (iattr->ia_valid & ATTR_MODE)
 		error = ext2_acl_chmod(inode);
+
+	/* update gps information */
+	ext2_set_gps(inode);
 	mark_inode_dirty(inode);
 
 	return error;
