@@ -171,6 +171,16 @@ static int read_gps(FILE *file, struct gps_location *result)
 
 	return ret < 0 ? false : true;
 }
+
+static struct gps_location get_random_loc(int i)
+{
+	struct gps_location gps;
+	gps.accuracy = i;
+	gps.latitude = i;
+	gps.longitude = i;
+	return gps;
+}
+
 int main2(int argc, char **argv);
 int main(int argc, char **argv)
 {
@@ -185,6 +195,7 @@ int main2(int argc, char **argv)
 	struct sigaction sigact;
 	struct gps_location location;
 	int ret;
+	int i = 0;
 	FILE *fp = NULL;
 	FILE *log = NULL;
 
@@ -244,6 +255,10 @@ int main2(int argc, char **argv)
 		}
 
 		fprintf(log, "Making System call\n");
+
+		/* TODO: Remove me. Make System call to be
+		 * from random locations.*/
+		location = get_random_loc(i++);
 		ret = syscall(SET_GPS, &location);
 
 		if (ret < 0)
