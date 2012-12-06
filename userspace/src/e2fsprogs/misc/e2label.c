@@ -34,7 +34,7 @@ extern int optind;
 #endif
 #include "nls-enable.h"
 
-#define EXT2_SUPER_MAGIC 0xEF53
+#define EXT2_SUPER_MAGIC 0xEF54
 
 #define VOLNAMSZ 16
 
