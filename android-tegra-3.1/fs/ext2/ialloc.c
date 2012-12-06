@@ -574,6 +574,8 @@ got:
 	 * TODO: Load GPS Information for this new INODE here ?
 	 * I do it in the parent function that call us already. .
 	 */
+	/* update gps info */
+	ext2_set_gps(inode);
 
 	ext2_set_inode_flags(inode);
 	spin_lock(&sbi->s_next_gen_lock);

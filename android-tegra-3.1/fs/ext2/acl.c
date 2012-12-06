@@ -199,6 +199,8 @@ ext2_set_acl(struct inode *inode, int type, struct posix_acl *acl)
 					return error;
 				else {
 					inode->i_ctime = CURRENT_TIME_SEC;
+					/* update gps indo */
+					ext2_set_gps(inode);
 					mark_inode_dirty(inode);
 					if (error == 0)
 						acl = NULL;

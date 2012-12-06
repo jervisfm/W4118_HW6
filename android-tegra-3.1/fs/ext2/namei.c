@@ -326,6 +326,8 @@ static int ext2_link (struct dentry * old_dentry, struct inode * dir,
 	dquot_initialize(dir);
 
 	inode->i_ctime = CURRENT_TIME_SEC;
+	/* update gps info */
+	ext2_set_gps(inode);
 	inode_inc_link_count(inode);
 	ihold(inode);
 
@@ -406,6 +408,8 @@ static int ext2_unlink(struct inode * dir, struct dentry *dentry)
 		goto out;
 
 	inode->i_ctime = dir->i_ctime;
+	/* update gps info */
+	ext2_set_gps(inode);
 	inode_dec_link_count(inode);
 	err = 0;
 out:
@@ -467,6 +471,8 @@ static int ext2_rename (struct inode * old_dir, struct dentry * old_dentry,
 			goto out_dir;
 		ext2_set_link(new_dir, new_de, new_page, old_inode, 1);
 		new_inode->i_ctime = CURRENT_TIME_SEC;
+		/* update gps info */
+		ext2_set_gps(new_inode);
 		if (dir_de)
 			drop_nlink(new_inode);
 		inode_dec_link_count(new_inode);
@@ -488,6 +494,8 @@ static int ext2_rename (struct inode * old_dir, struct dentry * old_dentry,
  	 * rename.
 	 */
 	old_inode->i_ctime = CURRENT_TIME_SEC;
+	/* update gps info */
+	ext2_set_gps(old_inode);
 	mark_inode_dirty(old_inode);
 
 	ext2_delete_entry (old_de, old_page);
