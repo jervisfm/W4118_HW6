@@ -2646,7 +2646,7 @@ configure:9159: $? = 0
 configure:9159: result: yes
 configure:9165: checking for _doprnt
 configure:9165: cc -o conftest -g -O2   conftest.c  >&5
-/tmp/ccvS9cF8.o: In function `main':
+/tmp/ccl1GLFU.o: In function `main':
 /os/hmwk6/userspace/src/e2fsprogs/conftest.c:159: undefined reference to `_doprnt'
 collect2: ld returned 1 exit status
 configure:9165: $? = 1
@@ -4274,7 +4274,7 @@ configure:9676: $? = 0
 configure:9676: result: yes
 configure:9676: checking for getmntinfo
 configure:9676: cc -o conftest -g -O2   conftest.c  >&5
-/tmp/ccrxlEjG.o: In function `main':
+/tmp/ccyQo8hk.o: In function `main':
 /os/hmwk6/userspace/src/e2fsprogs/conftest.c:174: undefined reference to `getmntinfo'
 collect2: ld returned 1 exit status
 configure:9676: $? = 1

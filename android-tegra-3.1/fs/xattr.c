@@ -135,7 +135,6 @@ vfs_setxattr(struct dentry *dentry, const char *name, const void *value,
 
 out:
 	mutex_unlock(&inode->i_mutex);
-
 	return error;
 }
 EXPORT_SYMBOL_GPL(vfs_setxattr);
@@ -246,7 +245,6 @@ vfs_removexattr(struct dentry *dentry, const char *name)
 
 	if (!error)
 		fsnotify_xattr(dentry);
-
 	return error;
 }
 EXPORT_SYMBOL_GPL(vfs_removexattr);

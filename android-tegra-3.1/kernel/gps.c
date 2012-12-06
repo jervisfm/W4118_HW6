@@ -26,8 +26,6 @@
  * the most interesting call is to do_last(), which lookups the last segment
  * of a file path. It's in do_last() where have a call to vfs_create().
  *
- * For locking an Inode, can do "mutex_lock(&inode->i_mutex);"
- *
  * Plan of actions
  * We have two choices:
  *
@@ -184,13 +182,6 @@ SYSCALL_DEFINE1(set_gps_location, struct gps_location __user *, loc)
 static int can_access_file(const char *file)
 {
 	/* TO be implemented */
-	/* int ret;
-	ret = access(file, R_OK);
-	if (ret < 0)
-		return 0;
-	else
-		return 1;
-	*/
 	return 0;
 }
 
@@ -199,14 +190,6 @@ static int can_access_file(const char *file)
 static int valid_filepath(const char *file)
 {
 	/* TO be implemented */
-	/*
-	int ret;
-	ret = access(file, F_OK);
-	if (ret < 0)
-		return 0;
-	else
-		return 1;
-	*/
 	return 0;
 }
 
@@ -261,14 +244,9 @@ static int get_file_gps_location(const char *kfile, struct gps_location *loc)
 
 	/* TODO: check if we need the LOOKUP_AUTOMOUNT flag as well ?
 	 * I don't think so, but just check to be sure. */
-	int ret = user_path(kfile, &kpath);
-	//int ret = kern_path(kfile, &kpath);
-	//int ret = kern_path(kfile, LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT, &kpath);
 	// if (kern_path(kfile, LOOKUP_DIRECTORY | LOOKUP_FOLLOW, &kpath) != 0) {
-	//if (kern_path(kfile, LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT, &kpath) != 0) {
-	if (ret != 0) {
-		printk("File Lookup Failed: %s. [%p] | %d\n", kfile,
-				kpath.dentry, ret);
+	if (kern_path(kfile, LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT, &kpath) != 0) {
+		printk("File Lookup Failed: %s\n", kfile);
 		return -EAGAIN;
 	}
 
@@ -291,7 +269,6 @@ static int get_file_gps_location(const char *kfile, struct gps_location *loc)
 	/* Assume gps call to read file worked */
 	printk("Looking up GPS information for file : %s\n",
 			kpath.dentry->d_iname);
-
 
 	/* Make the System GPS Read Call.*/
 	return vfs_get_gps(d_inode, loc);
@@ -344,25 +321,16 @@ SYSCALL_DEFINE2(get_gps_location,
 
 	/* TODO: Enable these checks when we implement the functions.
 	 * Don't forget to free the kpathname memory too. */
-	/*
-	 if (!valid_filepath(kpathname)) {
-		 kfree(kpathname);
-		 printk("File does not exist: %s\n", kpathname);
-		 return -EINVAL;
-	 }
+	/* if (!valid_filepath(file))
+		return -EINVAL;
 
-	if (!can_access_file(pathname)) {
-		kfree(kpathname);
-		printk("Process doesn't have Read PERM: %s\n", kpathname);
+	if (!can_access_file(pathname))
 		return -EACCES;
-	} */
+	*/
 
+	read_lock(&gps_lock);
 
-	//read_lock(&gps_lock); // delete
-
-	ret = get_file_gps_location(pathname, &kloc);
-
-	//read_unlock(&gps_lock); //delete
+	ret = get_file_gps_location(kpathname, &kloc);
 
 	if (ret < 0) {
 		printk("Oops, failed to read GPS information for %s. Error %d\n",
@@ -377,7 +345,7 @@ SYSCALL_DEFINE2(get_gps_location,
 		return -EFAULT;
 	}
 
-
+	read_unlock(&gps_lock);
 	kfree(kpathname);
 	/* TODO:
 	 * On success, the system call should return the i_coord_age value

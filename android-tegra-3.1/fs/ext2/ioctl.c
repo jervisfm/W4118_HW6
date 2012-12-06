@@ -81,8 +81,6 @@ long ext2_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 
 		ext2_set_inode_flags(inode);
 		inode->i_ctime = CURRENT_TIME_SEC;
-		/* update gps info */
-		ext2_set_gps(inode);
 		mark_inode_dirty(inode);
 setflags_out:
 		mnt_drop_write(filp->f_path.mnt);
@@ -100,8 +98,6 @@ setflags_out:
 			ret = -EFAULT;
 		} else {
 			inode->i_ctime = CURRENT_TIME_SEC;
-			/* update gps info */
-			ext2_set_gps(inode);
 			mark_inode_dirty(inode);
 		}
 		mnt_drop_write(filp->f_path.mnt);

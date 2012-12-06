@@ -2472,8 +2472,6 @@ int vfs_mknod(struct inode *dir, struct dentry *dentry, int mode, dev_t dev)
 	error = dir->i_op->mknod(dir, dentry, mode, dev);
 	if (!error)
 		fsnotify_create(dir, dentry);
-
-
 	return error;
 }
 
@@ -2564,7 +2562,6 @@ int vfs_mkdir(struct inode *dir, struct dentry *dentry, int mode)
 	error = dir->i_op->mkdir(dir, dentry, mode);
 	if (!error)
 		fsnotify_mkdir(dir, dentry);
-
 	return error;
 }
 
@@ -2659,7 +2656,6 @@ out:
 	dput(dentry);
 	if (!error)
 		d_delete(dentry);
-
 	return error;
 }
 
@@ -2847,7 +2843,6 @@ int vfs_symlink(struct inode *dir, struct dentry *dentry, const char *oldname)
 	error = dir->i_op->symlink(dir, dentry, oldname);
 	if (!error)
 		fsnotify_create(dir, dentry);
-
 	return error;
 }
 
@@ -2929,7 +2924,6 @@ int vfs_link(struct dentry *old_dentry, struct inode *dir, struct dentry *new_de
 	mutex_unlock(&inode->i_mutex);
 	if (!error)
 		fsnotify_link(dir, inode, new_dentry);
-
 	return error;
 }
 
@@ -3143,7 +3137,6 @@ int vfs_rename(struct inode *old_dir, struct dentry *old_dentry,
 	if (!error)
 		fsnotify_move(old_dir, new_dir, old_name, is_dir,
 			      new_dentry->d_inode, old_dentry);
-
 	fsnotify_oldname_free(old_name);
 
 	return error;

@@ -115,7 +115,6 @@ static long do_sys_truncate(const char __user *pathname, loff_t length)
 	if (!error)
 		error = do_truncate(path.dentry, length, 0, NULL);
 
-
 put_write_and_out:
 	put_write_access(inode);
 mnt_drop_write_and_out:

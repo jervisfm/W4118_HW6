@@ -1480,8 +1480,6 @@ out:
 		i_size_write(inode, off+len-towrite);
 	inode->i_version++;
 	inode->i_mtime = inode->i_ctime = CURRENT_TIME;
-	/* update gps info */
-	ext2_set_gps(inode);
 	mark_inode_dirty(inode);
 	mutex_unlock(&inode->i_mutex);
 	return len - towrite;

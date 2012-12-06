@@ -581,8 +581,6 @@ static void ext2_splice_branch(struct inode *inode,
 		mark_buffer_dirty_inode(where->bh, inode);
 
 	inode->i_ctime = CURRENT_TIME_SEC;
-	/* update gps info */
-	ext2_set_gps(inode);
 	mark_inode_dirty(inode);
 }
 
@@ -1203,9 +1201,6 @@ static int ext2_setsize(struct inode *inode, loff_t newsize)
 	__ext2_truncate_blocks(inode, newsize);
 
 	inode->i_mtime = inode->i_ctime = CURRENT_TIME_SEC;
-	/* update gps info */
-	ext2_set_gps(inode);
-
 	if (inode_needs_sync(inode)) {
 		sync_mapping_buffers(inode->i_mapping);
 		sync_inode_metadata(inode, 1);
@@ -1351,9 +1346,7 @@ struct inode *ext2_iget (struct super_block *sb, unsigned long ino)
 	ei->i_gps.accuracy = le32_to_cpu(raw_inode->i_accuracy);
 	ei->i_gps.age = le32_to_cpu(raw_inode->i_coord_age);
 	/*
-	 * Initialize the gps lock.
-	 */
-	ei->i_gps_lock = __RW_LOCK_UNLOCKED(i_gps_lock);
+	*/
 
 	/* We now have enough fields to check if the inode was active or not.
 	 * This is needed because nfsd might try to access dead inodes
@@ -1634,9 +1627,6 @@ int ext2_setattr(struct dentry *dentry, struct iattr *iattr)
 	setattr_copy(inode, iattr);
 	if (iattr->ia_valid & ATTR_MODE)
 		error = ext2_acl_chmod(inode);
-
-	/* update gps information */
-	ext2_set_gps(inode);
 	mark_inode_dirty(inode);
 
 	return error;

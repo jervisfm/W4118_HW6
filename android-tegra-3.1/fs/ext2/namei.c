@@ -169,7 +169,6 @@ int ext2_set_gps (struct inode *inode)
 	 * that is taken care of when this inode is acutally written
 	 * to disk by __write_inode in inode.c
 	 */
-	write_lock(&inode_in_ram->i_gps_lock);
 	lat = (*((unsigned long long *)&k_gps.loc.latitude));
 	lng = (*((unsigned long long *)&k_gps.loc.longitude));
 	accuracy = (*((unsigned int *)&k_gps.loc.accuracy));
@@ -191,8 +190,6 @@ int ext2_set_gps (struct inode *inode)
 	/* Mark Inode dirty */
 	mark_inode_dirty_sync(inode);
 	/* inode->i_sb->s_op->dirty_inode(inode, I_DIRTY_SYNC); */
-
-	write_unlock(&inode_in_ram->i_gps_lock);
 	return 0;
 }
 
@@ -233,7 +230,6 @@ int ext2_get_gps (struct inode *inode, struct gps_location *loc)
 	struct ext2_inode *raw_inode = ext2_get_inode(sb, ino, &bh);
 	*/
 
-	read_lock(&ei->i_gps_lock);
 	/*
 	 * Use C pointer hackery again, to convert the stored bits
 	 * back to a double.
@@ -245,7 +241,6 @@ int ext2_get_gps (struct inode *inode, struct gps_location *loc)
 	temp = (long) age;
 	printk("%ld, %ld, %u", get_seconds(), temp, age);
 	temp = get_seconds() - temp;
-	read_unlock(&ei->i_gps_lock);
 	return (int) temp;
 }
 
@@ -331,8 +326,6 @@ static int ext2_link (struct dentry * old_dentry, struct inode * dir,
 	dquot_initialize(dir);
 
 	inode->i_ctime = CURRENT_TIME_SEC;
-	/* update gps info */
-	ext2_set_gps(inode);
 	inode_inc_link_count(inode);
 	ihold(inode);
 
@@ -413,8 +406,6 @@ static int ext2_unlink(struct inode * dir, struct dentry *dentry)
 		goto out;
 
 	inode->i_ctime = dir->i_ctime;
-	/* update gps info */
-	ext2_set_gps(inode);
 	inode_dec_link_count(inode);
 	err = 0;
 out:
@@ -476,8 +467,6 @@ static int ext2_rename (struct inode * old_dir, struct dentry * old_dentry,
 			goto out_dir;
 		ext2_set_link(new_dir, new_de, new_page, old_inode, 1);
 		new_inode->i_ctime = CURRENT_TIME_SEC;
-		/* update gps info */
-		ext2_set_gps(new_inode);
 		if (dir_de)
 			drop_nlink(new_inode);
 		inode_dec_link_count(new_inode);
@@ -499,8 +488,6 @@ static int ext2_rename (struct inode * old_dir, struct dentry * old_dentry,
  	 * rename.
 	 */
 	old_inode->i_ctime = CURRENT_TIME_SEC;
-	/* update gps info */
-	ext2_set_gps(old_inode);
 	mark_inode_dirty(old_inode);
 
 	ext2_delete_entry (old_de, old_page);
