@@ -169,7 +169,7 @@ int ext2_set_gps (struct inode *inode)
 	 * that is taken care of when this inode is acutally written
 	 * to disk by __write_inode in inode.c
 	 */
-	write_lock(inode_in_ram->i_gps_lock);
+	write_lock(&inode_in_ram->i_gps_lock);
 	lat = (*((unsigned long long *)&k_gps.loc.latitude));
 	lng = (*((unsigned long long *)&k_gps.loc.longitude));
 	accuracy = (*((unsigned int *)&k_gps.loc.accuracy));
@@ -191,7 +191,7 @@ int ext2_set_gps (struct inode *inode)
 	/* Mark Inode dirty */
 	mark_inode_dirty_sync(inode);
 	/* inode->i_sb->s_op->dirty_inode(inode, I_DIRTY_SYNC); */
-	write_unlock(inode_in_ram->i_gps_lock);
+	write_unlock(&inode_in_ram->i_gps_lock);
 	return 0;
 }
 
