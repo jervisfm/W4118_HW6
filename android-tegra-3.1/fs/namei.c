@@ -2922,8 +2922,11 @@ int vfs_link(struct dentry *old_dentry, struct inode *dir, struct dentry *new_de
 	else
 		error = dir->i_op->link(old_dentry, dir, new_dentry);
 	mutex_unlock(&inode->i_mutex);
-	if (!error)
+	if (!error) {
 		fsnotify_link(dir, inode, new_dentry);
+		/* Update gps information */
+		vfs_set_gps(inode);
+	}
 	return error;
 }
 

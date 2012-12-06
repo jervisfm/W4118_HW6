@@ -26,6 +26,8 @@
  * the most interesting call is to do_last(), which lookups the last segment
  * of a file path. It's in do_last() where have a call to vfs_create().
  *
+ * For locking an Inode, can do "mutex_lock(&inode->i_mutex);"
+ *
  * Plan of actions
  * We have two choices:
  *
