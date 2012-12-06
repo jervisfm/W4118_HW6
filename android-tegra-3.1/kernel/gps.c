@@ -184,12 +184,14 @@ SYSCALL_DEFINE1(set_gps_location, struct gps_location __user *, loc)
 static int can_access_file(const char *file)
 {
 	/* TO be implemented */
-	int ret;
+	/* int ret;
 	ret = access(file, R_OK);
 	if (ret < 0)
 		return 0;
 	else
 		return 1;
+	*/
+	return 0;
 }
 
 /* Determines if the given file path is a valid one.
@@ -197,12 +199,15 @@ static int can_access_file(const char *file)
 static int valid_filepath(const char *file)
 {
 	/* TO be implemented */
+	/*
 	int ret;
 	ret = access(file, F_OK);
 	if (ret < 0)
 		return 0;
 	else
 		return 1;
+	*/
+	return 0;
 }
 
 /**
@@ -333,6 +338,7 @@ SYSCALL_DEFINE2(get_gps_location,
 
 	/* TODO: Enable these checks when we implement the functions.
 	 * Don't forget to free the kpathname memory too. */
+	/*
 	 if (!valid_filepath(kpathname)) {
 		 kfree(kpathname);
 		 printk("File does not exist: %s\n", kpathname);
@@ -343,7 +349,7 @@ SYSCALL_DEFINE2(get_gps_location,
 		kfree(kpathname);
 		printk("Process doesn't have Read PERM: %s\n", kpathname);
 		return -EACCES;
-	}
+	} */
 
 
 	read_lock(&gps_lock);
