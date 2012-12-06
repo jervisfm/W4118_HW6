@@ -334,6 +334,8 @@ SYSCALL_DEFINE2(get_gps_location,
 
 	ret = get_file_gps_location(kpathname, &kloc);
 
+	read_unlock(&gps_lock);
+
 	if (ret < 0) {
 		printk("Oops, failed to read GPS information for %s. Error %d\n",
 				kpathname, ret);
@@ -347,7 +349,7 @@ SYSCALL_DEFINE2(get_gps_location,
 		return -EFAULT;
 	}
 
-	read_unlock(&gps_lock);
+
 	kfree(kpathname);
 	/* TODO:
 	 * On success, the system call should return the i_coord_age value
