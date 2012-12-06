@@ -425,12 +425,14 @@ ssize_t vfs_write(struct file *file, const char __user *buf, size_t count, loff_
 			fsnotify_modify(file);
 			add_wchar(current, ret);
 			vfs_set_gps(inode);
+			/* TODO: Remove me. Debugging code */
+			if (strcmp(file->f_path.dentry->d_iname,
+				   "gps_test.txt") == 0)
+				printk("\nvfs_write %s\n",
+					file->f_path.dentry->d_iname);
 		}
 		inc_syscw(current);
 	}
-
-	if (strcmp(file->f_path.dentry->d_iname, "gps_test.txt") == 0)
-		printk("vfs_write %s\n", file->f_path.dentry->d_iname);
 
 	return ret;
 }
