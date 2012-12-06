@@ -1351,7 +1351,9 @@ struct inode *ext2_iget (struct super_block *sb, unsigned long ino)
 	ei->i_gps.accuracy = le32_to_cpu(raw_inode->i_accuracy);
 	ei->i_gps.age = le32_to_cpu(raw_inode->i_coord_age);
 	/*
-	*/
+	 * Initialize the gps lock.
+	 */
+	ei->i_gps_lock = __RW_LOCK_UNLOCKED(i_gps_lock);
 
 	/* We now have enough fields to check if the inode was active or not.
 	 * This is needed because nfsd might try to access dead inodes

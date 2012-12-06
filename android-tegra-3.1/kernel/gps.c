@@ -261,7 +261,8 @@ static int get_file_gps_location(const char *kfile, struct gps_location *loc)
 
 	/* TODO: check if we need the LOOKUP_AUTOMOUNT flag as well ?
 	 * I don't think so, but just check to be sure. */
-	int ret = kern_path(kfile, &kpath);
+	int ret = user_path(kfile, &kpath);
+	//int ret = kern_path(kfile, &kpath);
 	//int ret = kern_path(kfile, LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT, &kpath);
 	// if (kern_path(kfile, LOOKUP_DIRECTORY | LOOKUP_FOLLOW, &kpath) != 0) {
 	//if (kern_path(kfile, LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT, &kpath) != 0) {
@@ -290,6 +291,7 @@ static int get_file_gps_location(const char *kfile, struct gps_location *loc)
 	/* Assume gps call to read file worked */
 	printk("Looking up GPS information for file : %s\n",
 			kpath.dentry->d_iname);
+
 
 	/* Make the System GPS Read Call.*/
 	return vfs_get_gps(d_inode, loc);
@@ -356,11 +358,11 @@ SYSCALL_DEFINE2(get_gps_location,
 	} */
 
 
-	read_lock(&gps_lock);
+	//read_lock(&gps_lock); // delete
 
-	ret = get_file_gps_location(kpathname, &kloc);
+	ret = get_file_gps_location(pathname, &kloc);
 
-	read_unlock(&gps_lock);
+	//read_unlock(&gps_lock); //delete
 
 	if (ret < 0) {
 		printk("Oops, failed to read GPS information for %s. Error %d\n",
