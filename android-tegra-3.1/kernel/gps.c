@@ -373,7 +373,7 @@ SYSCALL_DEFINE2(get_gps_location,
 
 	ret = strncpy_from_user(kpathname, pathname, path_size);
 
-	if (ret < 0) {
+	if (ret < 0) { /* Error occured */
 		kfree(kpathname);
 		return -EFAULT;
 	} else if (ret == path_size) { /* Path is too long */
@@ -386,12 +386,15 @@ SYSCALL_DEFINE2(get_gps_location,
 
 	/* TODO: Enable these checks when we implement the functions.
 	 * Don't forget to free the kpathname memory too. */
-	/* if (!valid_filepath(file))
-		return -EINVAL;
-
-	if (!can_access_file(pathname))
+	if (!can_access_file(pathname)) {
+		kfree(kpathname);
+		printk("Error:  You cannot access the file");
 		return -EACCES;
-	*/
+	} else {
+		printk("Success: You have read access to the file: %s\n",
+				kpathname);
+	}
+
 
 	ret = get_file_gps_location(kpathname, &kloc);
 
