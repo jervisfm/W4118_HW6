@@ -240,14 +240,6 @@ static int can_access_file(const char *file)
 		return 0;
 }
 
-/* Determines if the given file path is a valid one.
- * Returns 1 if true, and 0 if false.  */
-static int valid_filepath(const char *file)
-{
-	/* TO be implemented */
-	return 0;
-}
-
 /**
  * Determine if the given @inode is on a FS that supports
  * GPS.
