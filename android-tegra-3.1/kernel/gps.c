@@ -70,6 +70,14 @@
  * [PATH_MAX] */
 #include <linux/limits.h>
 
+/* Define flag that stands for read file permission check. Borrowed
+ * from standard UNIX headers (unistd.h)
+ * See example at:
+ * http://sourceware.org/git/?p=glibc.git;a=blob;f=posix/unistd.h#l281*/
+#ifndef R_OK
+#define R_OK 4
+#endif /* R_OK */
+
 
 /* Structure to store the latest gps location.
  * Access to this struct outside this file should be done
@@ -225,7 +233,7 @@ static int can_access_file(const char *file)
 	/* Access system call returns 0 on success. R_OK flags checks
 	 * both that the file exists and that the current process has
 	 * permission to read the file */
-	// ret = sys_access(file, R_OK);
+	ret = sys_access(file, R_OK);
 	if (ret == 0)
 		return 1;
 	else
@@ -369,7 +377,7 @@ SYSCALL_DEFINE2(get_gps_location,
 		kfree(kpathname);
 		return -EFAULT;
 	} else if (ret == path_size) { /* Path is too long */
-		printk("Given Path (%s) is too long\n", path_size);
+		printk("Given Path is too long\n");
 		kfree(kpathname);
 		return -ENAMETOOLONG;
 	}
