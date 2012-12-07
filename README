@@ -1,6 +1,101 @@
+December 9th, 2012
+Operating Systems
+Homework 6
+Columbia University
+Team 21 (Alex, Jervis, Shane)
+
+About
+======
+This project consists of modification of the Linux Filesystem on which Android is based on to have native support for the storage of GPS information. 
+
+Design
+=======
+The Inode operations struct was updated to include support for setting and getting gps information for an inode. 
+
+The GPS information is written whenever an Inode is created or modified, and this includes the case when files are written to.
+
+The storage of the information is designed to be compatible with both big-endian and little endian systems. 
+
+How to Test/Run
+===============
+1) First create a new FS using the modified ext2 tools included. Assuming you're in the root directory, do: 
+
+$ dd if=/dev/zero of=hmwk6.fs bs=1M count=1
+$ sudo losetup /dev/loop0 hmwk6.fs
+$ sudo ./userspace/src/e2fsprogs/misc/mke2fs -I 256 -L w4118.hmwk6 /dev/loop0
+$ sudo losetup -d /dev/loop0
+
+2) Compile modified kernel and load up the android device with the modified Linux kernel. 
+
+3) Copy the new FS on to the device
+$ adb push hmwk6.fs /data/misc/
+
+4) Make and Copy the gps daemon to the device
+$ cd ./userspace/src/gpsd/
+$ make; make install_dev
+
+5) Make and Copy the test program to the device
+$ cd test
+$ make; make install_dev
+
+4) Start the GPS daemon
+$ adb shell /data/misc/gpsd
+
+This default command (i.e. no arguments) is interpreted to mean that the daemon will read coordinates from /data/media/gps_location.txt 
+
+For emulator testing purposes, the daemon can also feed monotically increasing coordinates to the kernel. To activate this option, pass in the "emu" as an argument: 
+$ adb shell 
+$ /data/misc/gpsd emu
+
+
+6) Mount the File System. 
+Use the mount script to mount the EXT2 modified FS. Make sure that the directory /data/misc/hmwk6 exists and it is empty. 
+$ cd ./userspace/bin
+$ ./slloop.sh
+
+If you see no error messsage(s) or no other output at all, then you have successfully mounted the FS. 
+
+7) Run the test programs 
+Create a file and try to read back its GPS coordinates
+$ adb shell
+$ /data/misc/test write
+
+Modify a File and try to read back its GPS coordinates
+$ adb shell
+$ /data/misc/test mod
+
+Read GPS coordinates of an existing file
+$ adb shell
+$ /data/misc/test read
+
+Test that kernel does not accept GPS coordinates with all 0s
+$ adb shell
+$ /data/misc/test gps
+
+The file in question in the first three cases is this :
+/data/misc/hmwk6/gps_test.txt  where hmwk6 directory is a mount point. 
+
+Testing
+==========
+This modifed filesystem was tested as much as possible and to the best of our knowledge it works. 
+
+Other Notes
+===========
+Please note that to avoid potential loss and destruction of data, that you umount the mounted file system properly by using the umount command or if that is not possilbe by properly shutting down the system or device through the conventinal Power Off / Shutdwn option. Failure to do so may result in loss of data as a consequence of the filesystem not being in a consistent state. This is possible becauses the EXT2 filesystem that we are working with has no support whatsoever for journaling or transactions support.
+
+Test Results
+=============
+We were able to run the walktool successfully. The URL generated is given below. 
+
+http://maps.googleapis.com/maps/api/staticmap?zoom=15&size=800x800&maptype=roadmap&sensor=false&path=color:0xff0000|weight:5|40.807618,-73.963072|40.807617,-73.963070|40.807614,-73.963075|40.807614,-73.963070|40.807618,-73.963072|40.807614,-73.963073|40.807615,-73.963074|40.807615,-73.963074|40.807421,-73.961976|40.807421,-73.961976|40.806886,-73.961491|40.806877,-73.961235|40.806880,-73.961188|40.806880,-73.961188|40.806880,-73.961188|40.806880,-73.961188|40.806880,-73.961188|40.806880,-73.961188|40.807084,-73.961663|40.806666,-73.961369|40.806666,-73.961369|40.806666,-73.961369|40.805762,-73.961775|40.805757,-73.961862|40.805721,-73.961866|40.805747,-73.961853|40.805756,-73.961889|40.805692,-73.961881|40.805681,-73.961969|40.805856,-73.962566|40.805990,-73.962700|40.806058,-73.962990|40.806077,-73.963133|40.807495,-73.963099|40.806288,-73.963711|40.806402,-73.964021|40.806423,-73.964167|40.806641,-73.964495|40.806623,-73.964837|40.806639,-73.964821|40.806583,-73.964813|40.807259,-73.964037|40.807262,-73.964028|40.807262,-73.964028|40.807262,-73.964028|40.807262,-73.964028|40.807262,-73.964028|40.807262,-73.964028|40.807262,-73.964028|40.808121,-73.966134|40.808215,-73.966189|40.808327,-73.966279|40.808271,-73.966328|40.808052,-73.965991|40.808021,-73.966037|40.808022,-73.965989|40.808023,-73.966051|40.808028,-73.966118|40.808039,-73.966093|40.808017,-73.966063|40.808024,-73.966033|40.808073,-73.966040|40.808115,-73.966238|40.808115,-73.966258|40.808383,-73.966369|40.808508,-73.966419|40.808498,-73.966443|40.808458,-73.966441|40.808513,-73.966430|40.808400,-73.966442|40.808438,-73.966358|40.808492,-73.966424|40.808464,-73.966397|40.808491,-73.966409|40.808510,-73.966375|40.808400,-73.966392|40.808428,-73.966411|40.808406,-73.966405|40.808506,-73.966454|40.808456,-73.966378|40.808513,-73.966350|40.808487,-73.966384|40.808496,-73.966417|40.808498,-73.966424|40.808492,-73.966446
+
+If you want to see the raw data, you can also find the included walktool and walktool_coords files in the repository. We also have an image file showing a map with the waypoint paths plotted on it. 
+
 Resources Consuluted:
 ======================
 Naser who was helpful with advice on how to make the floating point types work in the Linux Kernel. Also helped with debugging why the walk_tool was not working for us. 
+
+Alex who helped with debugging the  "sleeping while atomic" bug, that occured due to incorrect usage of locks/locking.
 
 Professional Linux Kernel Architecture, Chapter 8 : Virtual File System.
 
