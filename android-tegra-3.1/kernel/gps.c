@@ -77,7 +77,9 @@
 #ifndef R_OK
 #define R_OK 4
 #endif /* R_OK */
-
+#ifndef F_OK
+#define F_OK 0
+#endif /* F_OK */
 
 /* Structure to store the latest gps location.
  * Access to this struct outside this file should be done
