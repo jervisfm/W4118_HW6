@@ -222,6 +222,23 @@ SYSCALL_DEFINE1(set_gps_location, struct gps_location __user *, loc)
 	return 0;
 }
 
+/** Checks if the given file path exists or not
+ * @file is the file to be checked for.
+ * Returns 1 on success, and 0 on error (i.e. if filepath is invalid )
+ */
+static int valid_filepath(const char *file)
+{
+	int ret;
+	if (file == NULL)
+		return 0;
+
+	ret = sys_access(file, F_OK);
+	if (ret == 0)
+		return 1;
+	else
+		return 0;
+}
+
 /* Determines if the current user can access the current file.
  * Return 1 on true (i.e. file exists and user can access it)
  * and 0 if false (i.e. user does not either have access
@@ -230,6 +247,10 @@ static int can_access_file(const char *file)
 {
 	/* TO be implemented */
 	int ret;
+
+	if (file == NULL)
+		return 0;
+
 	/* Access system call returns 0 on success. R_OK flags checks
 	 * both that the file exists and that the current process has
 	 * permission to read the file */
@@ -254,11 +275,14 @@ static int gps_supported(struct inode *inode)
 		return 0;
 }
 
-/*
+/**
  * Retrieves the gps saved on the given file path and saves
  * this data in @loc parameter.
- * @kfile is already a kernel allocated string.
- * It returns the age of the data as an int.
+ * @kfile must be already a kernel allocated string.
+ * It returns the age of the data as an +ve number or -ve on error.
+ * Note:
+ * This function finds the gps information regardless of whether current
+ * process can read file. That should be checked for by the calling funciton.
  */
 static int get_file_gps_location(const char *kfile, struct gps_location *loc)
 {
@@ -271,13 +295,11 @@ static int get_file_gps_location(const char *kfile, struct gps_location *loc)
 
 	/* TODO: enable these checks when their functions
 	 * are implemented.
-	if (!valid_filepath(file))
-		return;
-
-	if (!can_access_file(file))
-		return;
-	*/
-
+	 */
+	if (!valid_filepath(kfile)) {
+		printk("Error: Invalid path entered: %s", kfile);
+		return -EINVAL;
+	}
 
 	/*
 	 * After looking at namei.c file in /fs, I determined
@@ -285,13 +307,11 @@ static int get_file_gps_location(const char *kfile, struct gps_location *loc)
 	 * This function is inturn called from do_path_lookup,
 	 * with tries different variations, which is inturn called by
 	 * kern_path(). So, we should use kern_path(). It returns 0 on
-	 * success and something else on failure
-	 *
+	 * success and something else on failure.
+	 * Note: that the complimentary macro user_path() won't work in
+	 * this case because the character string we're checking is
+	 * in kernel-address space
 	 */
-
-	/* TODO: check if we need the LOOKUP_AUTOMOUNT flag as well ?
-	 * I don't think so, but just check to be sure. */
-	// if (kern_path(kfile, LOOKUP_DIRECTORY | LOOKUP_FOLLOW, &kpath) != 0) {
 	if (kern_path(kfile, LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT, &kpath) != 0) {
 		printk("File Lookup Failed: %s\n", kfile);
 		return -EAGAIN;
@@ -305,7 +325,6 @@ static int get_file_gps_location(const char *kfile, struct gps_location *loc)
 		return -EINVAL;
 	}
 
-
 	/* Verify that the file path given is on a FS with GPS support */
 	if (!gps_supported(d_inode)) {
 		printk("GPS Lookup Not Supported: File (%s) "
@@ -313,15 +332,11 @@ static int get_file_gps_location(const char *kfile, struct gps_location *loc)
 		return -ENODEV;
 	}
 
-	/* Assume gps call to read file worked */
 	printk("Looking up GPS information for file : %s\n",
 			kpath.dentry->d_iname);
 
 	/* Make the System GPS Read Call.*/
 	return vfs_get_gps(d_inode, loc);
-
-	//struct file_system_type *fst; d_inode->i_ino;
-
 
 }
 
