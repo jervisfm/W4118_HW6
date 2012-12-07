@@ -1,6 +1,6 @@
 Resources Consuluted:
 ======================
-Naser who was helpful with advice on how to make the floating point types work in the Linux Kernel. 
+Naser who was helpful with advice on how to make the floating point types work in the Linux Kernel. Also helped with debugging why the walk_tool was not working for us. 
 
 Professional Linux Kernel Architecture, Chapter 8 : Virtual File System.
 
@@ -11,3 +11,8 @@ Personal Operating System Class Notes
 Printf specifiers syntax: 
 http://en.cppreference.com/w/c/io/fprintf
 http://www.cplusplus.com/reference/cstdio/printf/
+
+GlibC Source Code: Finding the flags for R_OK flag that specifies read file permission
+http://sourceware.org/git/?p=glibc.git;a=blob;f=posix/unistd.h#l281
+
+
