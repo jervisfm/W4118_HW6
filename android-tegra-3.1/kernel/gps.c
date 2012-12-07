@@ -215,11 +215,21 @@ SYSCALL_DEFINE1(set_gps_location, struct gps_location __user *, loc)
 }
 
 /* Determines if the current user can access the current file.
- * Return 1 on true and 0 if false (i.e. user does not have access) */
+ * Return 1 on true (i.e. file exists and user can access it)
+ * and 0 if false (i.e. user does not either have access
+ * or file is non-existent) */
 static int can_access_file(const char *file)
 {
 	/* TO be implemented */
-	return 0;
+	int ret;
+	/* Access system call returns 0 on success. R_OK flags checks
+	 * both that the file exists and that the current process has
+	 * permission to read the file */
+	// ret = sys_access(file, R_OK);
+	if (ret == 0)
+		return 1;
+	else
+		return 0;
 }
 
 /* Determines if the given file path is a valid one.
@@ -339,36 +349,32 @@ SYSCALL_DEFINE2(get_gps_location,
 	struct gps_location kloc;
 	char *kpathname;
 	int ret;
-	int path_size;
+	/* PATH_MAX is the maximum valid length of a filepath in UNIX */
+	int path_size = PATH_MAX + 1;
 	printk("\n********** GET GPS CALLED *********** \n");
 	if (pathname == NULL || loc == NULL) {
 		printk("\nError: Pathname or loc is NULL");
 		return -EINVAL;
 	}
 
-	path_size = strlen(pathname) + 1;
-
-	if (path_size > PATH_MAX + 1) {
-		printk("Given Path () is too long\n", path_size);
-		return -ENAMETOOLONG;
-	}
-
-
-	memset(&kloc, 0, sizeof(kloc));
-
 	kpathname = kcalloc(path_size, sizeof(char), GFP_KERNEL);
-
 	if (kpathname == NULL) {
 		printk("\nError: Failed to allocate memory \n");
 		return -ENOMEM;
 	}
 
-	/* Attempt to copy user parameter */
-	if (copy_from_user(kpathname, pathname, path_size) != 0) {
+	ret = strncpy_from_user(kpathname, pathname, path_size);
+
+	if (ret < 0) {
 		kfree(kpathname);
-		printk("\nFailed to do copy from user\n");
 		return -EFAULT;
+	} else if (ret == path_size) { /* Path is too long */
+		printk("Given Path (%s) is too long\n", path_size);
+		kfree(kpathname);
+		return -ENAMETOOLONG;
 	}
+
+	memset(&kloc, 0, sizeof(kloc));
 
 	/* TODO: Enable these checks when we implement the functions.
 	 * Don't forget to free the kpathname memory too. */
