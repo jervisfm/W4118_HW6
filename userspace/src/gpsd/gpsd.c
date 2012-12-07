@@ -238,11 +238,11 @@ int main(int argc, char **argv)
 		fp = fopen(GPS_LOCATION_FILE, "r");
 		if (fp == NULL) {
 			fprintf(log, "Warning: Failed to open LOC file"
-				      " for reading\n");
+				      " for reading. Quitting Daemon\n");
 			sleep(GPSD_FIX_FREQ);
 			return EXIT_FAILURE;
 		} else {
-			printf("Opened LOC file\n");
+			fprintf(log, "Opened LOC file\n");
 		}
 
 		/* send GPS values to kernel using system call */
