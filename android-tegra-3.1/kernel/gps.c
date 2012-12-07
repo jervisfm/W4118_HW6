@@ -271,6 +271,7 @@ static int gps_supported(struct inode *inode)
  */
 static int get_file_gps_location(const char *kfile, struct gps_location *loc)
 {
+	int ret;
 	struct inode *d_inode;
 	struct path kpath = { .mnt = NULL, .dentry = NULL} ;
 
@@ -313,7 +314,10 @@ static int get_file_gps_location(const char *kfile, struct gps_location *loc)
 			kpath.dentry->d_iname);
 
 	/* Make the System GPS Read Call.*/
-	return vfs_get_gps(d_inode, loc);
+	ret =  vfs_get_gps(d_inode, loc);
+	/* release the path found */
+	path_put(&kpath);
+	return ret;
 
 }
 
