@@ -204,11 +204,15 @@ static void test_gps()
 	if (ret < 0 ) {
 		perror("LOC1 Set GPS System call failed:");
 		print_gps(loc1);
+	} else {
+		printf("Syscall worked as expected\n");
 	}
 	ret = syscall(SET_GPS, &loc2);
 	if (ret < 0 ) {
 		perror("LOC2 Set GPS System call failed:");
 		print_gps(loc2);
+	} else {
+		printf("Syscall worked as expected");
 	}
 	printf("Testing gps done...\n");
 }
@@ -227,7 +231,7 @@ int main(int argc, char **argv)
 {
 	do_nothing();
 	if (argc < 2) {
-		printf("Usage: test read|write|mod\n");
+		printf("Usage: test read|write|mod|gps\n");
 		return 0;
 	}
 
