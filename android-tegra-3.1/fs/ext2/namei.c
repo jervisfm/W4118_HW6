@@ -188,8 +188,9 @@ int ext2_set_gps (struct inode *inode)
 	/*age.tv_sec = age.tv_sec < 0 ? -age.tv_sec : age.tv_sec;*/
 	age_in_seconds = (unsigned int) age.tv_sec;
 	inode_gps->age = cpu_to_le32(age_in_seconds);
-	/* Mark Inode dirty */
-	mark_inode_dirty_sync(inode);
+	/* Mark Inode dirty and sync if needed */
+	if (inode_needs_sync(inode))
+		mark_inode_dirty_sync(inode);
 	/* inode->i_sb->s_op->dirty_inode(inode, I_DIRTY_SYNC); */
 	write_unlock(&inode_in_ram->i_gps_lock);
 	return 0;
