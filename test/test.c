@@ -180,12 +180,47 @@ static void test_read()
 	}
 }
 
+static void test_gps()
+{
+	long int ret;
+	struct gps_location loc0 = { .latitude = 0, .longitude = 0,
+					.accuracy = 0 };
+	struct gps_location loc1 = { .latitude = -19, .longitude = -10,
+					.accuracy = 12 };
+	struct gps_location loc2 = { .latitude = 23, .longitude = 27,
+				     .accuracy = 2 };
+
+	printf("Test GPS Values Program\n");
+	memset(&loc0, 0, sizeof(loc0));
+
+	/* Retrieve File GPS Info From Kernel */
+	printf("About to Make System Call to Kernel to retrieve GPS info\n");
+	ret = syscall(SET_GPS, &loc0);
+	if (ret < 0 ) {
+		perror("LOC0 Set GPS System call failed:");
+		print_gps(loc0);
+	}
+	ret = syscall(SET_GPS, &loc1);
+	if (ret < 0 ) {
+		perror("LOC1 Set GPS System call failed:");
+		print_gps(loc1);
+	}
+	ret = syscall(SET_GPS, &loc2);
+	if (ret < 0 ) {
+		perror("LOC2 Set GPS System call failed:");
+		print_gps(loc2);
+	}
+	printf("Testing gps done...\n");
+}
+
+
 static void do_nothing()
 {
 	return;
 	test_read();
 	test_write_read();
 	test_mod();
+	test_gps();
 }
 
 int main(int argc, char **argv)
@@ -202,5 +237,7 @@ int main(int argc, char **argv)
 		test_write_read();
 	else if (strcmp(argv[1], "mod") == 0)
 		test_mod();
+	else if (strcmp(argv[1], "gps") == 0)
+		test_gps();
 	return 0;
 }
