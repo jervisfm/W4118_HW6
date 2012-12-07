@@ -134,22 +134,52 @@ static void print_gps(void)
 	*/
 }
 
+static unsigned long long int double_to_long(const double d)
+{
+	unsigned long long int result;
+	result = *((unsigned long long int*)(&d));
+	return result;
+}
+
+static unsigned int float_to_int(const float f)
+{
+	unsigned int result;
+	result = *((unsigned int*)(&f));
+	return result;
+}
+
 /* Returns 0 on success, and -ve on error.
  */
 static int valid_gps(struct gps_location *loc)
 {
+	/* TODO: Important.
+	 * Can't do direct floating comparison as that causes a compiler error.
+	 * From Piazza, it was mentioned that we should return an error
+	 * only if the GPS coordinates are all zeros, so we just check for
+	 * that
+	 * https://piazza.com/class#fall2012/comsw4118/1065
+	 */
+	const double zero_d = 0;
+	const float zero_f = 0;
+	unsigned long long int err_lat = double_to_long(zero_d);
+	unsigned long long int err_lng = double_to_long(zero_d);
+	unsigned int err_acc = float_to_int(zero_f);
+
+	unsigned long long int loc_lat;
+	unsigned long long int loc_lng;
+	unsigned int loc_acc;
+
 	if (loc == NULL)
 		return -EINVAL;
 
-	/* TODO: Important.
-	 * This is disabled because it causes a compiler error.
-	 * From Piazza, it was mentioned that we should return an error
-	 * if the GPS coordinates are not all zeros.
-	if (loc->latitude == 0 && loc->longitude == 0)
-		return -EINVAL;
+	loc_lat = double_to_long(loc->latitude);
+	loc_lng = double_to_long(loc->longitude);
+	loc_acc = float_to_int(loc->accuracy);
 
-	*/
-	return 0;
+	if (loc_lat == err_lat && loc_lng == err_lng && loc_acc == err_acc)
+		return -EINVAL;
+	else
+		return 0;
 }
 
 SYSCALL_DEFINE1(set_gps_location, struct gps_location __user *, loc)
@@ -157,8 +187,15 @@ SYSCALL_DEFINE1(set_gps_location, struct gps_location __user *, loc)
 	/* Still to be implemented */
 
 	struct gps_location *k_gps = &kernel_gps.loc;
-	if (valid_gps(loc) != 0)
+
+	/* Only root can update the gps information */
+	if (current_uid() != 0 && current_euid() != 0)
+		return -EACCES;
+
+	if (valid_gps(loc) != 0) {
+		printk("Invalid GPS GIVEN  to setGPS ");
 		return -EINVAL;
+	}
 
 	if (copy_from_user(k_gps,
 			   loc, sizeof(struct gps_location)) != 0)
