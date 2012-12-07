@@ -86,7 +86,7 @@ int main(int argc, char **argv)
 		usage(argv);
 
 	if (do_file_loc(argv[1]) < 0) {
-		printf("No GPS information: ");
+		printf("No GPS information: \n");
 		return EXIT_FAILURE;
 	}
 
