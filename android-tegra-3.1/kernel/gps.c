@@ -77,9 +77,7 @@
 #ifndef R_OK
 #define R_OK 4
 #endif /* R_OK */
-#ifndef F_OK
-#define F_OK 0
-#endif /* F_OK */
+
 
 /* Structure to store the latest gps location.
  * Access to this struct outside this file should be done
@@ -224,23 +222,6 @@ SYSCALL_DEFINE1(set_gps_location, struct gps_location __user *, loc)
 	return 0;
 }
 
-/** Checks if the given file path exists or not
- * @file is the file to be checked for.
- * Returns 1 on success, and 0 on error (i.e. if filepath is invalid )
- */
-static int valid_filepath(const char *file)
-{
-	int ret;
-	if (file == NULL)
-		return 0;
-
-	ret = sys_access(file, F_OK);
-	if (ret == 0)
-		return 1;
-	else
-		return 0;
-}
-
 /* Determines if the current user can access the current file.
  * Return 1 on true (i.e. file exists and user can access it)
  * and 0 if false (i.e. user does not either have access
@@ -285,6 +266,8 @@ static int gps_supported(struct inode *inode)
  * Note:
  * This function finds the gps information regardless of whether current
  * process can read file. That should be checked for by the calling funciton.
+ * Also, the function *assumes* that a valid kernel path is to be given,
+ * otherwise the result is undefined.
  */
 static int get_file_gps_location(const char *kfile, struct gps_location *loc)
 {
@@ -294,14 +277,6 @@ static int get_file_gps_location(const char *kfile, struct gps_location *loc)
 	/* Still to be implemented */
 	if (kfile == NULL || loc == NULL)
 		return -EINVAL;
-
-	/* TODO: enable these checks when their functions
-	 * are implemented.
-	 */
-	if (!valid_filepath(kfile)) {
-		printk("Error: Invalid path entered: %s", kfile);
-		return -EINVAL;
-	}
 
 	/*
 	 * After looking at namei.c file in /fs, I determined
