@@ -36,21 +36,6 @@
 
 static int should_exit = 0;
 
-
-static void print_gps(struct gps_location gps_location)
-{
-	unsigned long long int lat = 0, lng = 0;
-	unsigned int acc = 0;
-	lat = *((unsigned long long int*) &gps_location.latitude);
-	lng = *((unsigned long long int*) &gps_location.longitude);
-	acc = *((unsigned int*) &gps_location.accuracy);
-
-	/* still doesn't appear to work */
-	printf("Latitude: %#llx\n Longitude: %#llx\n Accuracy: %#x",
-			lat, lng, acc);
-}
-
-
 /*
  * My own get line function. I am writing my own because the
  * GNU getline fucntion is not defined under the ARM
