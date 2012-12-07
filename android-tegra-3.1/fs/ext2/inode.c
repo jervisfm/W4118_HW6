@@ -1523,7 +1523,7 @@ static int __ext2_write_inode(struct inode *inode, int do_sync)
 
 	/* TODO: Important, DELETE this temporary hack, which forces
 	 * writing back to disk.  */
-	 do_sync = 1;
+	 //do_sync = 1;
 
 
 	/* TODO: Actually enable this after

@@ -191,9 +191,10 @@ int ext2_set_gps (struct inode *inode)
 	/* Mark Inode dirty.
 	 * Okay, this if-condition is a bit wierd but from my testing it's
 	 * the only that works properly and does not cause file system
-	 * corruption. */
-	if ((inode->i_state & I_DIRTY)) {
-		printk("Ookay, if conditions is true ... doing nothing \n");
+	 * corruption.
+	 * TODO: Investigate why this hack is necessary.  */
+	if (inode->i_state & I_DIRTY) {
+		printk("Ookay, if conditions is true ... marking dirty\n");
 		mark_inode_dirty(inode);
 	}
 

@@ -302,20 +302,34 @@ SYSCALL_DEFINE2(get_gps_location,
 	struct gps_location kloc;
 	char *kpathname;
 	int ret;
-	int path_size = PATH_MAX + 1;
-	if (pathname == NULL || loc == NULL)
+	int path_size;
+	printk("\n********** GET GPS CALLED *********** \n");
+	if (pathname == NULL || loc == NULL) {
+		printk("\nError: Pathname or loc is NULL");
 		return -EINVAL;
+	}
+
+	path_size = strlen(pathname) + 1;
+
+	if (path_size > PATH_MAX + 1) {
+		printk("Given Path () is too long\n", path_size);
+		return -ENAMETOOLONG;
+	}
+
 
 	memset(&kloc, 0, sizeof(kloc));
 
 	kpathname = kcalloc(path_size, sizeof(char), GFP_KERNEL);
 
-	if (kpathname == NULL)
+	if (kpathname == NULL) {
+		printk("\nError: Failed to allocate memory \n");
 		return -ENOMEM;
+	}
 
 	/* Attempt to copy user parameter */
 	if (copy_from_user(kpathname, pathname, path_size) != 0) {
 		kfree(kpathname);
+		printk("\nFailed to do copy from user\n");
 		return -EFAULT;
 	}
 
@@ -336,11 +350,14 @@ SYSCALL_DEFINE2(get_gps_location,
 				kpathname, ret);
 		kfree(kpathname);
 		return -EAGAIN;
+	} else {
+		printk("\nSuccess:Successfully looked UP GPS info\n");
 	}
 
 	if (copy_to_user(loc, &kloc, sizeof(struct gps_location)) != 0) {
 		read_unlock(&gps_lock);
 		kfree(kpathname);
+		printk("\nError: copy TO user failed\n");
 		return -EFAULT;
 	}
 
