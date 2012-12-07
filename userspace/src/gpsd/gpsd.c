@@ -17,6 +17,9 @@
 
 #include "gpsd.h"
 
+/* Random gps flag */
+#define RAND_GPS_ARG "emu"
+
 /* System call numbers */
 #define SET_GPS 376
 #define GET_GPS 377
@@ -177,7 +180,7 @@ static struct gps_location get_random_loc(int i)
 	struct gps_location gps;
 	gps.accuracy = i * 1.01;
 	gps.latitude = i * 1.01;
-	gps.longitude = i *1.01;
+	gps.longitude = i * 1.01;
 	return gps;
 }
 
@@ -202,9 +205,14 @@ int main(int argc, char **argv)
 		sigaction(SIGTERM, &sigact, NULL))
 		perror("Failed to install sig handler for daemon! ");
 
-
-	printf("Turning into a Daemon ...");
-
+	if (argc == 1)
+		printf("Using the GPS File: %s\n", GPS_LOCATION_FILE);
+	else {
+		if (argc == 2 && strcmp(argv[1], RAND_GPS_ARG) == 0)
+			printf("Using Randomly generated GPS Locations\n");
+	}
+	printf("Turning into a Daemon ...\n");
+	fflush(NULL);
 	/* When turned to a daemon, redirection of stderr/stdout to nothing
 	 * (/dev/null) happens automatically */
 	ret = daemon(0, 0);
@@ -248,9 +256,10 @@ int main(int argc, char **argv)
 
 		fprintf(log, "Making System call\n");
 
-		/* TODO: Remove me. Make System call to be
-		 * from random locations.*/
-		location = get_random_loc(i++);
+		/* Use random gps values if rand flag is set .*/
+		if (argc == 2 && strcmp(argv[1], RAND_GPS_ARG) == 0)
+			location = get_random_loc(i++);
+
 		ret = syscall(SET_GPS, &location);
 
 		if (ret < 0)
