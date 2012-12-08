@@ -79,6 +79,52 @@ Testing
 ==========
 This modifed filesystem was tested as much as possible and to the best of our knowledge it works. 
 
+FileLoc Testing
+===============
+On the FS, there the following files: 
+* 1
+* 2
+* dir1 # this is a directory with a td1 test file
+* dir2 # this is a directory with a td test file
+* gps_test.txt
+* walktool
+
+Running File Loc on some of files and directories, we see the following results: 
+
+./file_loc /data/misc/hmwk6/1
+GPS File Reader Tool
+Retrieved GPS Information:
+Latitude: 40.808517
+ Longitude: -73.966408
+ Accuracy: 21.889999m
+
+Age of GPS info is 139202 seconds
+Google Maps URL: http://maps.googleapis.com/maps/api/staticmap?zoom=13&size=800x800&maptype=roadmap&markers=color:blue|label:P|40.808517,-73.966408&sensor=false
+
+--
+./file_loc /data/misc/hmwk6/2                        
+GPS File Reader Tool
+Retrieved GPS Information:
+Latitude: 40.808517
+ Longitude: -73.966408
+ Accuracy: 21.889999m
+
+Age of GPS info is 139198 seconds
+Google Maps URL: http://maps.googleapis.com/maps/api/staticmap?zoom=13&size=800x800&maptype=roadmap&markers=color:blue|label:P|40.808517,-73.966408&sensor=false
+
+--
+
+./file_loc /data/misc/hmwk6/dir2                     
+GPS File Reader Tool
+Retrieved GPS Information:
+Latitude: 40.808517
+ Longitude: -73.966408
+ Accuracy: 21.889999m
+
+Age of GPS info is 139237 seconds
+Google Maps URL: http://maps.googleapis.com/maps/api/staticmap?zoom=13&size=800x800&maptype=roadmap&markers=color:blue|label:P|40.808517,-73.966408&sensor=false
+
+
 Other Notes
 ===========
 Please note that to avoid potential loss and destruction of data, that you umount the mounted file system properly by using the umount command or if that is not possilbe by properly shutting down the system or device through the conventinal Power Off / Shutdwn option. Failure to do so may result in loss of data as a consequence of the filesystem not being in a consistent state. This is possible becauses the EXT2 filesystem that we are working with has no support whatsoever for journaling or transactions support.
@@ -109,5 +155,3 @@ http://www.cplusplus.com/reference/cstdio/printf/
 
 GlibC Source Code: Finding the flags for R_OK flag that specifies read file permission
 http://sourceware.org/git/?p=glibc.git;a=blob;f=posix/unistd.h#l281
-
-
