@@ -164,7 +164,7 @@ static int is_directory(char *path)
 	int ret;
 	if (path == NULL)
 		return 0;
-	ret = sys_open(path, O_DIRECTORYy, O_RDONLY);
+	ret = sys_open(path, O_DIRECTORY, O_RDONLY);
 
 	if (ret < 0) /* Failed to open DIR, */
 		return 0;
