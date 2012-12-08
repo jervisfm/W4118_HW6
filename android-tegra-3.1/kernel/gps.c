@@ -156,6 +156,22 @@ static unsigned int float_to_int(const float f)
 	return result;
 }
 
+
+/* Tries to determine if the given path is a directory or not.
+ * Definitely Always Returns 1 on true and 0 if false with high probability. */
+static int is_directory(char *path)
+{
+	int ret;
+	if (path == NULL)
+		return 0;
+	ret = sys_open(path, O_DIRECTORYy, O_RDONLY);
+
+	if (ret < 0) /* Failed to open DIR, */
+		return 0;
+	else  /* Definitely is a directory */
+		return 1;
+}
+
 /* Returns 0 on success, and -ve on error.
  */
 static int valid_gps(struct gps_location *loc)
@@ -234,10 +250,21 @@ static int can_access_file(const char *file)
 	if (file == NULL)
 		return 0;
 
-	/* Access system call returns 0 on success. R_OK flags checks
-	 * both that the file exists and that the current process has
-	 * permission to read the file */
-	ret = sys_access(file, R_OK);
+	if (is_directory(file)){
+		/* returns -1 on error */
+		ret = sys_open(file, O_DIRECTORY, O_RDONLY);
+		if (ret < 0)
+			/* leave it that way */;
+		else
+			ret = 0; /* set success value. */
+
+	} else {
+		/* Access system call returns 0 on success. R_OK flags checks
+		 * both that the file exists and that the current process has
+		 * permission to read the file */
+		ret = sys_access(file, R_OK);
+	}
+
 	if (ret == 0)
 		return 1;
 	else
