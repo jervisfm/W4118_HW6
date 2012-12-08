@@ -5,7 +5,7 @@ CFLAGS := -Wall -Werror -g
 INCLUDE = -I. -I../android-tegra-3.1/usr/include -I../android-tegra-3.1/include -I../android-tegra-3.1/arch/arm/include
 LDFLAGS := -static $(INCLUDE)
 
-all: test 
+all: test
 
 test: test.c
 	$(CC) -o $@ $< $(CFLAGS) $(LDFLAGS)
@@ -28,5 +28,5 @@ TARGET_DIR = /data/misc
 install_%: $(all)
 	@echo [INSTALL] moving test binaries to $(ADB_TGT) [$(TARGET_DIR)]...
 	@adb $(ADB_OPT) remount
-	@adb $(ADB_OPT) push test $(TARGET_DIR)	
-	@adb $(ADB_OPT) shell chmod 6755 $(TARGET_DIR)/test	
+	@adb $(ADB_OPT) push test $(TARGET_DIR)
+	@adb $(ADB_OPT) shell chmod 6755 $(TARGET_DIR)/test

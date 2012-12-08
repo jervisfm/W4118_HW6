@@ -99,7 +99,7 @@ static DEFINE_RWLOCK(gps_lock);
 static unsigned long long int double_to_long(const double d)
 {
 	unsigned long long int result;
-	result = *((unsigned long long int* )(&d));
+	result = *((unsigned long long int *)(&d));
 	return result;
 }
 
