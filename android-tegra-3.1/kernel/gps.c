@@ -159,7 +159,7 @@ static unsigned int float_to_int(const float f)
 
 /* Tries to determine if the given path is a directory or not.
  * Definitely Always Returns 1 on true and 0 if false with high probability. */
-static int is_directory(char *path)
+static int is_directory(const char *path)
 {
 	int ret;
 	if (path == NULL)
