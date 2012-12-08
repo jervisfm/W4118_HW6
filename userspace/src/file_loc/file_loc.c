@@ -75,6 +75,17 @@ static void usage(char **argv)
 	printf("Usage: %s <file>\n", argv[0]);
 	exit(0);
 }
+/* Tries to determine if the given path is a directory or not.
+ * Definitely Always Returns 1 on true and 0 if false with high probability. */
+static int is_directory(char *path)
+{
+
+	DIR* result = opendir(path);
+	if (result == NULL) /* Failed to open DIR, likely path not dir */
+		return 0;
+	else  /* Definitely is a directory */
+		return 1;
+}
 
 int main(int argc, char **argv)
 {
@@ -84,6 +95,13 @@ int main(int argc, char **argv)
 
 	if (argc != 2)
 		usage(argv);
+
+	if (is_directory(argv[1])) {
+		printf("Directory Path Entered.\n"
+		      "GPS information is only available for files and not"
+		      "Directories\n");
+		return EXIT_FAILURE;
+	}
 
 	if (do_file_loc(argv[1]) < 0) {
 		printf("No GPS information: \n");
