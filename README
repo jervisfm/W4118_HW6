@@ -38,7 +38,10 @@ $ make; make install_dev
 $ cd test
 $ make; make install_dev
 
-4) Start the GPS daemon
+5a) If testing on the device, you should run the provided GPSLocator android app
+so that it creates the /data/media/gps_location.txt file. 
+
+6) Start the GPS daemon
 $ adb shell /data/misc/gpsd
 
 This default command (i.e. no arguments) is interpreted to mean that the daemon will read coordinates from /data/media/gps_location.txt 
@@ -48,14 +51,14 @@ $ adb shell
 $ /data/misc/gpsd emu
 
 
-6) Mount the File System. 
+7) Mount the File System. 
 Use the mount script to mount the EXT2 modified FS. Make sure that the directory /data/misc/hmwk6 exists and it is empty. 
 $ cd ./userspace/bin
 $ ./slloop.sh
 
 If you see no error messsage(s) or no other output at all, then you have successfully mounted the FS. 
 
-7) Run the test programs 
+8) Run the test programs 
 Create a file and try to read back its GPS coordinates
 $ adb shell
 $ /data/misc/test write
@@ -127,7 +130,7 @@ Google Maps URL: http://maps.googleapis.com/maps/api/staticmap?zoom=13&size=800x
 
 Other Notes
 ===========
-Please note that to avoid potential loss and destruction of data, that you umount the mounted file system properly by using the umount command or if that is not possilbe by properly shutting down the system or device through the conventinal Power Off / Shutdwn option. Failure to do so may result in loss of data as a consequence of the filesystem not being in a consistent state. This is possible becauses the EXT2 filesystem that we are working with has no support whatsoever for journaling or transactions support.
+Please note that to avoid potential loss and destruction of data, you should unmount the mounted file system properly by using the umount command or if that is not possilbe by properly shutting down the system or device through the conventinal Power Off / Shutdwn option. Failure to do so may result in loss of data as a consequence of the filesystem not being in a consistent state. This is possible because the EXT2 filesystem that we are working with has no support whatsoever for journaling or transactions support.
 
 Test Results
 =============
